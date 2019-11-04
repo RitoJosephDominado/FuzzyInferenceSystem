@@ -1,4 +1,4 @@
-rm(list = ls())
+
 
 source('Main/membership_functions.R')
 source('Main/linguistic_variable.R')

@@ -3,8 +3,8 @@ library(R6)
 FuzzyInferenceSystem <- R6Class(
   classname = 'FuzzyInferenceSystem',
   public = list(
-    linguistic_variable_list = NULL,
-    fuzzy_proposition_list = NULL
+    linguistic_variable_list = list(),
+    fuzzy_proposition_list = list()
   )
 )
 

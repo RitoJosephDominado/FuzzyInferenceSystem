@@ -5,6 +5,8 @@ add_linguistic_variable_ui <- function(name){
     width = 12, title = 'Add linguistic variable',
     fluidRow(
       column(2, textInput(ns('linguistic_variable_name_text'), label = 'Name')),
+      column(3, numericInput(ns('range_min_numeric'), 'Min', 0, -10000, 10000, 0.1)),
+      column(3, numericInput(ns('range_max_numeric'), 'Max', 100, -10000, 10000, 0.1)),
       column(2, br(), actionButton(ns('add_linguistic_variable_btn'), 'Add'))
     ),
     tags$div(id = ns('linguistic_variable_ui_div'))
@@ -12,12 +14,44 @@ add_linguistic_variable_ui <- function(name){
   )
 }
 
-add_linguistic_variable_server <- function(input, output, session, main, triggers){
+add_linguistic_variable_server <- function(input, output, session, main, triggers, plot_variables){
   observeEvent(input$add_linguistic_variable_btn, {
-    insertUI(
-      selector = paste0('#',session$ns('linguistic_variable_ui_div')),
-      ui = h2('LV')
-    )
-    print('yep')
+    linguistic_variable_name <- input$linguistic_variable_name_text
+    
+    if(linguistic_variable_name %in% names(main$fuzzy_inference_system$linguistic_variable_list)){
+      showModal(
+        modalDialog(
+          title = 'Invalid Linguistic Variable Name',
+          p('A linguistic variable with that name has already been added')
+        )
+      )
+    }else if(grepl('^\\s*$', linguistic_variable_name)){
+      showModal(
+        modalDialog(
+          title = 'Invalid Linguistic Variable Name',
+          p('Cannot enter a linguistic variable name with just whitespace')
+        )
+      )
+    }else{
+      main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]] <- linguistic_variable()
+      rng <- c(min = input$range_min_numeric, max = input$range_max_numeric)
+      plot_variables[[linguistic_variable_name]] <- rng
+      
+      insertUI(
+        selector = paste0('#', session$ns('linguistic_variable_ui_div')),
+        ui = linguistic_variable_ui(ui_name = session$ns(linguistic_variable_name), linguistic_variable_name = linguistic_variable_name)
+      )
+      
+      callModule(
+        linguistic_variable_server, id = linguistic_variable_name,
+        main = main, triggers = triggers,
+        linguistic_variable_name = linguistic_variable_name, rng = rng
+      )
+    }
+    
+    # insertUI(
+    #   selector = paste0('#',session$ns('linguistic_variable_ui_div')),
+    #   ui = linguistic_variable_ui(session$ns('a'), 'a')
+    # )
   })
 }

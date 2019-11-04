@@ -1,5 +1,3 @@
-rm(list = ls())
-
 
 source('Main/FuzzyInferenceSystem.R')
 source('Main/linguistic_variable.R')

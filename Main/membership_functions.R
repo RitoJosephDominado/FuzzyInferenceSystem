@@ -40,7 +40,7 @@ trapezoidal_membership_function <- function(p1, p2, p3, p4){
 
 gaussian_membership_function <- function(gaussian_mean, gaussian_sd){
   function(a){
-    exp(-((a - gaussian_mean)/gaussian_mean_sd)^2)
+    exp(-((a - gaussian_mean)/gaussian_sd)^2)
   }
 }
 

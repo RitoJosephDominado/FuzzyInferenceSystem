@@ -9,7 +9,7 @@ height <- linguistic_variable(
   medium = trapezoidal_membership_function(145, 160, 175, 190),
   tall = s_membership_function(170, 200)
 )
-
+s
 weight <- linguistic_variable(
   light = z_membership_function(50, 65),
   medium = trapezoidal_membership_function(45, 60, 80, 90),
