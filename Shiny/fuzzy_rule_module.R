@@ -56,3 +56,4 @@ fuzzy_rule_server <- function(input, output, session, main, triggers, parent = N
     index = index
   )
 }
+

@@ -1,7 +1,6 @@
 
 compound_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   ns <- NS(ui_name)
-  
   fuzzy_proposition_type <- if(parent[[index]]$type == 'union_fuzzy_proposition'){
     'Union'
   }else if(parent[[index]]$type == 'intersection_fuzzy_proposition'){
@@ -10,8 +9,9 @@ compound_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   
   box(
     width = 12, title = fuzzy_proposition_type,
+    fluidRow(div(paste('ui_name:', ui_name)), div(paste('ns yep:', ns('yep')))),
+    
     fluidRow(
-      # column(4, h4('Fuzzy rules')),
       column(4, selectInput(ns('fuzzy_proposition_type_select'), 'Type', choices = c(
         Simple = 'simple_fuzzy_proposition',
         Intersection = 'intersection_fuzzy_proposition',
@@ -68,15 +68,17 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
     #---
     # fuzzy_proposition <- parent[[index]]
     
-    this <- parent$argument[[index]]
-    child_index <- length(this$argument_list) + 1
     
-    this$argument_list[[child_index]] <- switch(
+    child_index <- length(parent[[index]]$argument_list) + 1
+    print(paste0('CHILD INDEX: ', child_index))
+    fuzzy_proposition <- switch(
       input$fuzzy_proposition_type_select,
       'simple_fuzzy_proposition' = simple_fuzzy_proposition(NULL, NULL),
       'intersection_fuzzy_proposition' = intersection_fuzzy_proposition(),
       'union_fuzzy_proposition' = union_fuzzy_proposition()
     )
+    
+    parent[[index]]$argument_list[[child_index]] <- fuzzy_proposition
     
     fuzzy_proposition_ui <- switch(
       input$fuzzy_proposition_type_select,
@@ -90,7 +92,7 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
       ui = fuzzy_proposition_ui(
         session$ns(index), 
         main = main,
-        parent = this$argument_list,
+        parent = parent[[index]]$argument_list,
         index = child_index
       )
     )
@@ -106,7 +108,7 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
       module = fuzzy_proposition_server,
       id = index,
       main = main, triggers = triggers,
-      parent = this, index = child_index
+      parent = parent[[index]]$argument_list, index = child_index
     )
   })
   

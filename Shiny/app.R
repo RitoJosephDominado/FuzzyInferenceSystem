@@ -1,6 +1,8 @@
 library(shiny)
 library(shinydashboard)
+library(rlang)
 library(R6)
+library(listviewer)
 
 make_reactive_trigger <- function(){
   rv <- reactiveValues(a = 0)
@@ -74,7 +76,8 @@ server <- function(input, output, session) {
   
   triggers <- reactiveValues(
     uploaded_json = make_reactive_trigger(),
-    update_fuzzy_inference_system = make_reactive_trigger()
+    update_fuzzy_inference_system = make_reactive_trigger(),
+    added_linguistic_variable = make_reactive_trigger()
   )
   
   plot_variables <- reactiveValues(

@@ -3,9 +3,9 @@ simple_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   ns <- NS(ui_name)
   
   linguistic_variables <- names(main$fuzzy_inference_system$linguistic_variable_list)
-  print('humm')
-  print(main$fuzzy_inference_system$linguistic_variable_list)
-  print(length(main$fuzzy_inference_system$linguistic_variable_list))
+  # print('humm')
+  # print(main$fuzzy_inference_system$linguistic_variable_list)
+  # print(length(main$fuzzy_inference_system$linguistic_variable_list))
   if(length(main$fuzzy_inference_system$linguistic_variable_list) == 0){
     fuzzy_sets <- NULL
   }else{

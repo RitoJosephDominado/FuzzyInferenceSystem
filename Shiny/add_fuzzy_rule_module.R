@@ -33,7 +33,7 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
     index <- length(main$fuzzy_inference_system$fuzzy_proposition_list) + 1
     main$fuzzy_inference_system$fuzzy_proposition_list[[index]] <- fuzzy_proposition
     
-    
+    print(paste('index from rule:', index))
     
     insertUI(
       selector = paste0('#', session$ns('fuzzy_rule_ui_div')),

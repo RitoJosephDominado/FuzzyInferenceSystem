@@ -12,31 +12,28 @@ linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
         width = 12, title = 'Add Fuzzy Set',
         status = 'success',
         fluidRow(
-          column(4, textInput(ns('fuzzy_set_name_text'), 'Name')),
-          column(6, selectInput(ns('fuzzy_set_type_select'), 'Type', choices = c(
-            'Z-shaped' = 'z',
-            'S-shaped' = 's',
-            'Trapezoidal' = 'trapezoidal',
-            'Gaussian' = 'gaussian'
-          ))),
-          
-          fluidRow(
-            column(
-              6,
-              box(
-                width = 12, title = 'Parameters', status = 'primary',solidHeader = TRUE,
-                uiOutput(ns('parameters_ui')),
-                fluidRow(column(4, actionButton(ns('add_fuzzy_set_btn'), 'Add')))
-              )
-            ),
-            column(
-              6,
-              box(
-                width = 12, title = 'Plot', status = 'primary', solidHeader = TRUE,
-                plotOutput(ns('main_plot'))
-              )
-              
+          column(
+            6,
+            box(
+              width = 12, title = 'Parameters', status = 'primary',solidHeader = TRUE,
+              column(4, textInput(ns('fuzzy_set_name_text'), 'Name')),
+              column(6, selectInput(ns('fuzzy_set_type_select'), 'Type', choices = c(
+                'Z-shaped' = 'z',
+                'S-shaped' = 's',
+                'Trapezoidal' = 'trapezoidal',
+                'Gaussian' = 'gaussian'
+              ))),
+              uiOutput(ns('parameters_ui')),
+              fluidRow(column(4, actionButton(ns('add_fuzzy_set_btn'), 'Add')))
             )
+          ),
+          column(
+            6,
+            box(
+              width = 12, title = 'Plot', status = 'primary', solidHeader = TRUE,
+              plotOutput(ns('main_plot'))
+            )
+            
           ),
           
           box(
@@ -91,6 +88,7 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
           p(paste0('A fuzzy set with that name has already been added to ', linguistic_variable_name))
         )
       )
+      return(NULL)
     }else if(grepl('^\\s*$', fuzzy_set_name)){
       showModal(
         modalDialog(
@@ -98,6 +96,7 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
           p('Cannot enter a fuzzy set name with just whitespace')
         )
       )
+      return(NULL)
     }
     
     fuzzy_set <- if(input$fuzzy_set_type_select == 'z'){
@@ -109,8 +108,6 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
     }else if(input$fuzzy_set_type_select == 'gaussian'){
       gaussian_fuzzy_set(input$gaussian_mean_numeric, input$gaussian_sd_numeric)
     }
-    
-    
     
     main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]][[fuzzy_set_name]] <- fuzzy_set
     
