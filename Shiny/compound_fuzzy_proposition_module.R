@@ -8,7 +8,7 @@ compound_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   }
   
   box(
-    width = 12, title = fuzzy_proposition_type,
+    width = 12, title = fuzzy_proposition_type, status = 'primary', solidHeader = TRUE,
     fluidRow(div(paste('ui_name:', ui_name)), div(paste('ns yep:', ns('yep')))),
     
     fluidRow(
@@ -78,7 +78,7 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
       'union_fuzzy_proposition' = union_fuzzy_proposition()
     )
     
-    parent[[index]]$argument_list[[child_index]] <- fuzzy_proposition
+    parent[[index]]$argument_list[[child_index]] <- fuzzy_proposition %>% convert_fuzzy_proposition_to_environment
     
     fuzzy_proposition_ui <- switch(
       input$fuzzy_proposition_type_select,
@@ -90,7 +90,7 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
     insertUI(
       selector = paste0('#', session$ns('fuzzy_proposition_ui_div')),
       ui = fuzzy_proposition_ui(
-        session$ns(index), 
+        session$ns(child_index), 
         main = main,
         parent = parent[[index]]$argument_list,
         index = child_index
@@ -106,7 +106,7 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
     
     callModule(
       module = fuzzy_proposition_server,
-      id = index,
+      id = child_index,
       main = main, triggers = triggers,
       parent = parent[[index]]$argument_list, index = child_index
     )

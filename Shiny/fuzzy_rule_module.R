@@ -22,7 +22,7 @@ fuzzy_rule_ui <- function(ui_name, index){
 
 fuzzy_rule_server <- function(input, output, session, main, triggers, parent = NULL, index){
   
-  fuzzy_proposition <- main$fuzzy_inference_system$fuzzy_proposition_list[[index]]
+  fuzzy_proposition <- main$fuzzy_proposition_environment_list[[index]]
   
   fuzzy_proposition_ui <- switch(
     fuzzy_proposition$type,
@@ -52,7 +52,7 @@ fuzzy_rule_server <- function(input, output, session, main, triggers, parent = N
     module = fuzzy_proposition_server,
     id = index,
     main = main, triggers = triggers,
-    parent = main$fuzzy_inference_system$fuzzy_proposition_list, 
+    parent = main$fuzzy_proposition_environment_list, 
     index = index
   )
 }

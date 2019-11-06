@@ -14,7 +14,7 @@ simple_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   
     
   box(
-    width = 12, title = 'Simple fuzzy proposition',
+    width = 12, title = 'Simple fuzzy proposition', status = 'success', solidHeader = TRUE,
     fluidRow(
       column(5, selectInput(ns('linguistic_variable_select'), 'Linguistic variable', choices = linguistic_variables)),
       column(2, selectInput(ns('is_negated_select'), '', choices = c('IS' = 'is', 'IS NOT' = 'is_not'))),

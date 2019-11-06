@@ -8,6 +8,10 @@ save_ui <- function(ui_name){
     box(
       width = 6, title = 'Fuzzy propositions',
       reactjsonOutput(ns('fuzzy_proposition_list_reactjson'))
+    ),
+    box(
+      width = 6, title = 'Fuzzy proposition environments',
+      reactjsonOutput(ns('fuzzy_proposition_environment_list_reactjson'))
     )
   )
 }
@@ -22,5 +26,10 @@ save_server <- function(input, output, session, main, triggers){
   output$fuzzy_proposition_list_reactjson <- renderReactjson({
     triggers$update_fuzzy_inference_system$depend()
     main$fuzzy_inference_system$fuzzy_proposition_list %>% reactjson
+  })
+  
+  output$fuzzy_proposition_environment_list_reactjson <- renderReactjson({
+    triggers$update_fuzzy_inference_system$depend()
+    main$fuzzy_proposition_environment_list %>% map(.f = convert_environment_to_fuzzy_proposition) %>% reactjson
   })
 }

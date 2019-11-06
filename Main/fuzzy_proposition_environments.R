@@ -3,22 +3,21 @@ simple_fuzzy_proposition_environment <- function(linguistic_variable_name, fuzzy
   env(
     type = 'simple_fuzzy_proposition',
     linguistic_variable_name = linguistic_variable_name,
-    fuzzy_set_name = fuzzy_set_name,
-    is_negated = NULL
+    fuzzy_set_name = fuzzy_set_name
   )
 }
 
-intersection_fuzzy_proposition_environment <- function(){
+intersection_fuzzy_proposition_environment <- function(...){
   env(
     type = 'intersection_fuzzy_proposition',
-    argument_list = list()
+    argument_list = list(...)
   )
 }
 
-union_fuzzy_proposition_environment <- function(){
+union_fuzzy_proposition_environment <- function(...){
   env(
     type = 'union_fuzzy_proposition',
-    argument_list = list()
+    argument_list = list(...)
   )
 }
 
@@ -39,13 +38,15 @@ convert_environment_to_fuzzy_proposition <- function(x_environment){
     )
   }else if(x_environment$type == 'intersection_fuzzy_proposition'){
     return(
-      intersection_fuzzy_proposition(
+      do.call(
+        intersection_fuzzy_proposition,
         map(x_environment$argument_list, convert_environment_to_fuzzy_proposition)
       )
     )
   }else if(x_environment$type == 'union_fuzzy_proposition'){
     return(
-      union_fuzzy_proposition(
+      do.call(
+        union_fuzzy_proposition,
         map(x_environment$argument_list, convert_environment_to_fuzzy_proposition)
       )
     )
@@ -64,14 +65,22 @@ convert_fuzzy_proposition_to_environment <- function(fuzzy_proposition){
     )
   }else if(fuzzy_proposition$type == 'intersection_fuzzy_proposition'){
     return(
-      intersection_fuzzy_proposition_environment(
+      do.call(
+        intersection_fuzzy_proposition_environment,
         map(fuzzy_proposition$argument_list, convert_fuzzy_proposition_to_environment)
       )
     )
   }else if(fuzzy_proposition$type == 'union_fuzzy_proposition'){
     return(
-      union_fuzzy_proposition(
+      do.call(
+        union_fuzzy_proposition_environment,
         map(fuzzy_proposition$argument_list, convert_fuzzy_proposition_to_environment)
+      )
+    )
+  }else if(fuzzy_proposition$type == 'negation_fuzzy_proposition'){
+    return(
+      negation_fuzzy_proposition_environment(
+        convert_fuzzy_proposition_to_environment(fuzzy_proposition)
       )
     )
   }

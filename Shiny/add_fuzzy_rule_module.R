@@ -21,8 +21,6 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
     selected_type <- input$fuzzy_proposition_type_select
     
     
-    
-    
     if(input$fuzzy_proposition_type_select == 'simple_fuzzy_proposition'){
       fuzzy_proposition <- simple_fuzzy_proposition(NULL, NULL)
     }else if(input$fuzzy_proposition_type_select == 'union_fuzzy_proposition'){
@@ -32,6 +30,8 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
     }
     index <- length(main$fuzzy_inference_system$fuzzy_proposition_list) + 1
     main$fuzzy_inference_system$fuzzy_proposition_list[[index]] <- fuzzy_proposition
+    
+    main$fuzzy_proposition_environment_list[[index]] <- convert_fuzzy_proposition_to_environment(fuzzy_proposition)
     
     print(paste('index from rule:', index))
     
@@ -47,7 +47,7 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
     callModule(
       fuzzy_rule_server, index,
       main = main, triggers = triggers,
-      parent = main$fuzzy_inference_system$fuzzy_proposition_list,
+      parent = main$fuzzy_proposition_environment_list,
       index = index
     )
     

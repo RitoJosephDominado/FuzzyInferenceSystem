@@ -4,19 +4,6 @@ library(rlang)
 library(R6)
 library(listviewer)
 
-make_reactive_trigger <- function(){
-  rv <- reactiveValues(a = 0)
-  list(
-    depend = function(){
-      rv$a
-      invisible()
-    },
-    trigger = function(){
-      rv$a <- isolate(rv$a + 1)
-    }
-  )
-}
-
 
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
@@ -41,7 +28,7 @@ source('Main/fuzzy_sets.R')
 source('Main/linguistic_variable.R')
 source('Main/fuzzy_propositions.R')
 source('Main/FuzzyInferenceSystem.R')
-
+source('Main/fuzzy_proposition_environments.R')
 
 
 
@@ -71,7 +58,8 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   main <- reactiveValues(
-    fuzzy_inference_system = FuzzyInferenceSystem$new()
+    fuzzy_inference_system = FuzzyInferenceSystem$new(),
+    fuzzy_proposition_environment_list = list()
   )
   
   triggers <- reactiveValues(
