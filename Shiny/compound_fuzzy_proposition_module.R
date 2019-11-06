@@ -9,7 +9,6 @@ compound_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   
   box(
     width = 12, title = fuzzy_proposition_type, status = 'primary', solidHeader = TRUE,
-    fluidRow(div(paste('ui_name:', ui_name)), div(paste('ns yep:', ns('yep')))),
     
     fluidRow(
       column(4, selectInput(ns('fuzzy_proposition_type_select'), 'Type', choices = c(

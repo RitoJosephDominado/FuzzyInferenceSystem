@@ -2,7 +2,7 @@
 fuzzy_rule_ui <- function(ui_name, index){
   ns <- NS(ui_name)
   box(
-    width = 12, title= paste('Fuzzy rule', index),
+    width = 12, title= paste('Fuzzy rule', index), background = 'red',
     # reactjsonOutput(ns('main_reactjson')),
     # fluidRow(
     #   column(4, h4('Fuzzy rules')),
