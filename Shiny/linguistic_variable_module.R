@@ -9,13 +9,14 @@ linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
     tags$div(
       id = ns('add_fuzzy_set_div'),
       box(
-        width = 12, title = 'Add Fuzzy Set',
-        status = 'success',
+        width = 12, title = 'Add Fuzzy Set', collapsible = TRUE,
+        status = 'primary', solidHeader = TRUE,
         fluidRow(
-          column(
-            6,
+          div(
+            # 6,
+            class = 'col-sm-12 col-md-12 col-lg-6',
             box(
-              width = 12, title = 'Parameters', status = 'primary',solidHeader = TRUE,
+              width = 12, title = 'Parameters', status = 'success', solidHeader = TRUE,
               column(4, textInput(ns('fuzzy_set_name_text'), 'Name')),
               column(6, selectInput(ns('fuzzy_set_type_select'), 'Type', choices = c(
                 'Z-shaped' = 'z',
@@ -27,22 +28,21 @@ linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
               fluidRow(column(4, actionButton(ns('add_fuzzy_set_btn'), 'Add')))
             )
           ),
-          column(
-            6,
+          div(
+            # 6,
+            class = 'col-sm-12 col-md-12 col-lg-6',
             box(
-              width = 12, title = 'Plot', status = 'primary', solidHeader = TRUE,
+              width = 12, title = 'Plot', status = 'success', solidHeader = TRUE,
               plotOutput(ns('main_plot'))
             )
             
-          ),
-          
-          box(
-            title = 'Fuzzy Sets', width = 12, background = 'light-blue',
-            tags$div(id = ns('fuzzy_set_ui_div'))
           )
         )
-        
       )
+    ),
+    box(
+      title = 'Fuzzy Sets', width = 12, background = 'light-blue',
+      tags$div(id = ns('fuzzy_set_ui_div'))
     )
   )
 }
@@ -127,6 +127,7 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
     local_triggers$added_fuzzy_set$trigger()
   })
   
+
   output$main_plot <- renderPlot({
     local_triggers$added_fuzzy_set$depend()
     lv <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]

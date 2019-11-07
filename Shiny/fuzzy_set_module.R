@@ -3,6 +3,7 @@ fuzzy_set_ui <- function(ui_name, linguistic_variable_name, fuzzy_set_name){
   ns <- NS(ui_name)
   box(
     width = 6, title = paste(linguistic_variable_name, ':', fuzzy_set_name),
+    collapsible = TRUE, collapsed = TRUE,
     reactjsonOutput(ns('model_reactjson'))
   )
 }

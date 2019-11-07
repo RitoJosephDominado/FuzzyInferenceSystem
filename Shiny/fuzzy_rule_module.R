@@ -15,7 +15,7 @@ fuzzy_rule_ui <- function(ui_name, index){
     # ),
     column(7, tags$div(id = ns('fuzzy_proposition_ui_div'))),
     column(2, h3('THEN')),
-    column(3, textInput(ns('consequent_text'), 'Consequent'))
+    column(3, textInput(ns('consequent_text'), 'Consequent', value = paste('Rule', index)))
   )
 }
 
@@ -55,5 +55,12 @@ fuzzy_rule_server <- function(input, output, session, main, triggers, parent = N
     parent = main$fuzzy_proposition_environment_list, 
     index = index
   )
+  
+  observeEvent(input$consequent_text, {
+    names(main$fuzzy_proposition_environment_list)[index] <- input$consequent_text
+    print('changed fis fuzzy prop name------------------------')
+    print(names(main$fuzzy_proposition_environment_list)[index])
+    
+  })
 }
 

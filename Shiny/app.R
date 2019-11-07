@@ -3,7 +3,7 @@ library(shinydashboard)
 library(rlang)
 library(R6)
 library(listviewer)
-
+library(rhandsontable)
 
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
@@ -50,7 +50,7 @@ ui <- dashboardPage(
       tabItem(tabName = 'upload_tab', upload_ui('upload')),
       tabItem(tabName = 'add_linguistic_variable_tab', add_linguistic_variable_ui('add_linguistic_variable')),
       tabItem(tabName = 'add_fuzzy_rule_tab', add_fuzzy_rule_ui('add_fuzzy_rule')),
-      tabItem(tabName = 'evaulation_tab', evaluation_ui('evaluation')),
+      tabItem(tabName = 'evaluation_tab', evaluation_ui('evaluation')),
       tabItem(tabName = 'save_tab', save_ui('save'))
     )
   )
@@ -94,8 +94,14 @@ server <- function(input, output, session) {
     main = main, triggers = triggers
   )
   
+  callModule(
+    evaluation_server, 'evaluation',
+    main = main, triggers = triggers
+  )
+  
   observeEvent(input$main_sidebar, {
     triggers$update_fuzzy_inference_system$trigger()
+    main$fuzzy_inference_system$fuzzy_proposition_list <- map(main$fuzzy_proposition_environment_list, convert_environment_to_fuzzy_proposition)
   })
 }
 

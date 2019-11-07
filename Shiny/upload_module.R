@@ -14,7 +14,11 @@ make_reactive_trigger <- function(){
 
 upload_ui <- function(name){
   ns <- NS(name)
-  h3('uploaddd')
+  box(
+    width = 12,
+    column(6, fileInput(ns('fuzzy_inference_system_json_file'), 'Fuzzy inference system file (.json)')),
+    column(3, br(), actionButton(ns('upload_fuzzy_inference_system_json'), 'Upload'))
+  )
 }
 
 upload_server <- function(input, output, session, main, triggers){

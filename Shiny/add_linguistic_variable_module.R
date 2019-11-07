@@ -48,10 +48,5 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
         linguistic_variable_name = linguistic_variable_name, rng = rng
       )
     }
-    
-    # insertUI(
-    #   selector = paste0('#',session$ns('linguistic_variable_ui_div')),
-    #   ui = linguistic_variable_ui(session$ns('a'), 'a')
-    # )
   })
 }

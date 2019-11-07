@@ -1,4 +1,4 @@
-
+rm(list = ls())
 source('Main/FuzzyInferenceSystem.R')
 source('Main/linguistic_variable.R')
 source('Main/membership_functions.R')
