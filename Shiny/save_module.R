@@ -44,5 +44,6 @@ save_server <- function(input, output, session, main, triggers){
   
   observeEvent(input$save_fuzzy_inference_system_btn, {
     print('saving!')
+    
   })
 }

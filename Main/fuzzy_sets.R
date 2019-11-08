@@ -18,7 +18,7 @@ s_fuzzy_set <- function(p1, p2){
 
 trapezoidal_fuzzy_set <- function(p1, p2, p3, p4){
   list(
-    type = 'z_fuzzy_set',
+    type = 'trapezoidal_fuzzy_set',
     p1 = p1,
     p2 = p2,
     p3 = p3,

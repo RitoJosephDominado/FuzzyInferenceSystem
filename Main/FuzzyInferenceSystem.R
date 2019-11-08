@@ -20,8 +20,6 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_
   if(fuzzy_proposition$type == 'simple_fuzzy_proposition'){
     linguistic_variable_name <- fuzzy_proposition$linguistic_variable_name
     fuzzy_set_name <- fuzzy_proposition$fuzzy_set_name
-    print('--==--')
-    print(fuzzy_proposition)
     membership_function <- self$linguistic_variable_list[[linguistic_variable_name]][[fuzzy_set_name]]$membership_function
     
     membership_df <- membership_function(feature_df[, linguistic_variable_name])

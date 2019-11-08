@@ -4,6 +4,7 @@ library(rlang)
 library(R6)
 library(listviewer)
 library(rhandsontable)
+library(jsonlite)
 
 source('upload_module.R')
 source('add_linguistic_variable_module.R')

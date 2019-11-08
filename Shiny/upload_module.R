@@ -22,5 +22,7 @@ upload_ui <- function(name){
 }
 
 upload_server <- function(input, output, session, main, triggers){
-  
+  observeEvent(input$upload_fuzzy_inference_system_json, {
+    print('ok ok')
+  })
 }
