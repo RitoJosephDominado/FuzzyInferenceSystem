@@ -17,13 +17,20 @@ simple_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
     fuzzy_set_names <- names(main$fuzzy_inference_system$linguistic_variable_list[[selected_linguistic_variable]]$fuzzy_set_list)
   }
   
-
+  
   
   box(
     width = 12, title = 'Simple fuzzy proposition', status = 'success', solidHeader = TRUE,
     fluidRow(
-      column(5, selectInput(ns('linguistic_variable_select'), 'Linguistic variable', choices = linguistic_variables, selected = selected_linguistic_variable)),
-      column(2, selectInput(ns('is_negated_select'), '', choices = c('IS' = 'is', 'IS NOT' = 'is_not'))),
+      column(12, shinyWidgets::materialSwitch(ns('negate_switch'), strong('Negate'), status = 'primary'), style = 'color:black')
+    ),
+    fluidRow(
+      div(
+        class = 'col-sm-12 col-md-5 col-lg-5',
+        
+        selectInput(ns('linguistic_variable_select'), 'Linguistic variable', choices = linguistic_variables, selected = selected_linguistic_variable)
+      ),
+      column(2, br(), textOutput(ns('is_negated_text')), br()),
       column(5, selectInput(ns('fuzzy_set_select'), 'Fuzzy set', choices = fuzzy_set_names, selected = selected_fuzzy_set))
     )
   )
@@ -81,6 +88,18 @@ simple_fuzzy_proposition_server <- function(input, output, session, main, trigge
       choices = fuzzy_set_names,
       selected = selected_fuzzy_set
     )
+  })
+  
+  observeEvent(input$negate_switch, {
+    parent[[index]]$negated <- input$negate_switch
+  })
+  
+  output$is_negated_text <- renderText({
+    if(input$negate_switch){
+      'IS NOT'
+    }else{
+      'IS'
+    }
   })
 }
 

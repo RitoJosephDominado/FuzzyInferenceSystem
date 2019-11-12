@@ -18,7 +18,6 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition_list', function(f
 
 FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_proposition, feature_df){
   
-  
   if(fuzzy_proposition$type == 'simple_fuzzy_proposition'){
     linguistic_variable_name <- fuzzy_proposition$linguistic_variable_name
     fuzzy_set_name <- fuzzy_proposition$fuzzy_set_name
@@ -26,22 +25,35 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_
     
     if(is.null(membership_function)){
       membership_df <- rep(NA_real_, nrow(feature_df))
-      return(membership_df)
+    }else{
+      membership_df <- membership_function(feature_df[, linguistic_variable_name])
     }
-    membership_df <- membership_function(feature_df[, linguistic_variable_name])
-    print('----- DF _------')
-    print(membership_df)
-    return(membership_df)
+
   }else if(fuzzy_proposition$type == 'union_fuzzy_proposition'){
     result_list <- map(fuzzy_proposition$argument_list, self$evaluate_fuzzy_proposition, feature_df = feature_df)
-    return(do.call(pmax, result_list))
+    if(length(result_list) > 0){
+      membership_df <- do.call(pmax, result_list)
+    }else{
+      membership_df <- rep(NA_real_, nrow(feature_df))
+    }
   }else if(fuzzy_proposition$type == 'intersection_fuzzy_proposition'){
     result_list <- map(fuzzy_proposition$argument_list, self$evaluate_fuzzy_proposition, feature_df = feature_df)
-    return(do.call(pmin, result_list))
+    if(length(result_list) > 0){
+      membership_df <- do.call(pmin, result_list)
+    }else{
+      membership_df <- rep(NA_real_, nrow(feature_df))
+    }
+    
   }else if(fuzzy_proposition$type == 'negation_fuzzy_proposition'){
     return(1 - self$evaluate_fuzzy_proposition(fuzzy_proposition$argument, feature_df))
   }else{
     stop('Not a fuzzy proposition')
+  }
+  
+  if(fuzzy_proposition$negated){
+    return(1 - membership_df)
+  }else{
+    return(membership_df)
   }
 })
 
@@ -55,4 +67,3 @@ FuzzyInferenceSystem$set('public', 'plot_feature', function(features, linguistic
   }
   abline(v = features[linguistic_variable_name], col = 'red', lwd = 2)
 })
-

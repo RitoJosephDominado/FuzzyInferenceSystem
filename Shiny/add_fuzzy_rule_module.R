@@ -4,10 +4,7 @@ add_fuzzy_rule_ui <- function(name){
     # width = 12, title = 'Add fuzzy rules',
     box(
       width = 12,
-      # fluidRow(
       verticalLayout(
-        
-      
         selectInput(
           ns('fuzzy_proposition_type_select'), 'Type', 
           choices = c(
@@ -35,7 +32,10 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
       fuzzy_proposition <- union_fuzzy_proposition()
     }else if(input$fuzzy_proposition_type_select == 'intersection_fuzzy_proposition'){
       fuzzy_proposition <- intersection_fuzzy_proposition()
+    }else if(input$fuzzy_proposition_type_select == 'negation_fuzzy_proposition'){
+      fuzzy_proposition <- negation_fuzzy_proposition()
     }
+    
     index <- length(main$fuzzy_inference_system$fuzzy_proposition_list) + 1
     main$fuzzy_inference_system$fuzzy_proposition_list[[index]] <- fuzzy_proposition
     main$fuzzy_proposition_environment_list[[index]] <- convert_fuzzy_proposition_to_environment(fuzzy_proposition)
@@ -57,8 +57,6 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
     )
     
   })
-  
-  
   
   observe({
     triggers$uploaded_json$depend()

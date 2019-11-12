@@ -16,7 +16,8 @@ compound_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
         Intersection = 'intersection_fuzzy_proposition',
         Union = 'union_fuzzy_proposition'
       ))),
-      column(4, actionButton(ns('add_fuzzy_proposition_btn'), 'Add'))
+      column(4, br(), actionButton(ns('add_fuzzy_proposition_btn'), 'Add')),
+      column(4, shinyWidgets::materialSwitch(ns('negate_switch'), strong('Negate'), status = 'primary'), style = 'color:black')
     ),
     tags$div(id = ns('fuzzy_proposition_ui_div'))
   )
@@ -100,6 +101,10 @@ compound_fuzzy_proposition_server <- function(input, output, session, main, trig
       main = main, triggers = triggers,
       parent = parent[[index]]$argument_list, index = child_index
     )
+  })
+  
+  observeEvent(input$negate_switch, {
+    parent[[index]]$negated <- input$negate_switch
   })
   
   

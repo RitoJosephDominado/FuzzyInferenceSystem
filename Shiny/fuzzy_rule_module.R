@@ -6,8 +6,12 @@ fuzzy_rule_ui <- function(ui_name, main, index){
     name <- paste('Rule', index)
   }
   box(
-    width = 12, title= paste('Fuzzy rule', index), background = 'red',
-    column(7, tags$div(id = ns('fuzzy_proposition_ui_div'))),
+    width = 12, title= paste('Fuzzy rule', index), #background = 'red',
+    div(
+      class = 'col-sm-12 col-md-12 col-lg-7',
+      tags$div(id = ns('fuzzy_proposition_ui_div'))
+    ),
+    
     column(2, h3('THEN')),
     column(3, textInput(ns('consequent_text'), 'Consequent', value = name))
   )
@@ -22,7 +26,8 @@ fuzzy_rule_server <- function(input, output, session, main, triggers, parent = N
     fuzzy_proposition$type,
     'simple_fuzzy_proposition' = simple_fuzzy_proposition_ui,
     'intersection_fuzzy_proposition' = compound_fuzzy_proposition_ui,
-    'union_fuzzy_proposition' = compound_fuzzy_proposition_ui
+    'union_fuzzy_proposition' = compound_fuzzy_proposition_ui,
+    'negation_fuzzy_proposition' = negation_fuzzy_proposition_ui
   )
   
   insertUI(
@@ -39,7 +44,8 @@ fuzzy_rule_server <- function(input, output, session, main, triggers, parent = N
     fuzzy_proposition$type,
    'simple_fuzzy_proposition' = simple_fuzzy_proposition_server,
    'intersection_fuzzy_proposition' = compound_fuzzy_proposition_server,
-   'union_fuzzy_proposition' = compound_fuzzy_proposition_server
+   'union_fuzzy_proposition' = compound_fuzzy_proposition_server,
+   'negation_fuzzy_proposition' = negation_fuzzy_proposition_server
   )
   
   callModule(

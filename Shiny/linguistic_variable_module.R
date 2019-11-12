@@ -4,16 +4,19 @@ linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
   ns <- NS(ui_name)
   
   box(
-    width = 12, title = linguistic_variable_name,
-    collapsible = TRUE,
+    width = 12, 
+    
+    title = linguistic_variable_name,
     tags$div(
+      div(
+        column(width = 6, align = 'right', actionButton(ns('delete_btn'), 'Delete'))
+      ),
       id = ns('add_fuzzy_set_div'),
       box(
         width = 12, title = 'Add Fuzzy Set', collapsible = TRUE,
         status = 'primary', solidHeader = TRUE,
         fluidRow(
           div(
-            # 6,
             class = 'col-sm-12 col-md-12 col-lg-6',
             box(
               width = 12, title = 'Parameters', status = 'success', solidHeader = TRUE,
@@ -36,6 +39,10 @@ linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
               plotOutput(ns('main_plot'))
             )
             
+          ),
+          box(
+            width = 12,
+            column(width = 12, align = 'right', actionButton('hey', 'ehy'))
           )
         )
       )
@@ -101,7 +108,7 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
     
     fuzzy_set_name <- input$fuzzy_set_name_text
     
-    if(fuzzy_set_name %in% names(main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]])){
+    if(fuzzy_set_name %in% names(main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list)){
       showModal(
         modalDialog(
           title = 'Invalid Fuzzy Set Name',

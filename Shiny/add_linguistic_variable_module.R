@@ -14,7 +14,7 @@ add_linguistic_variable_ui <- function(name){
   )
 }
 
-add_linguistic_variable_server <- function(input, output, session, main, triggers, plot_variables){
+add_linguistic_variable_server <- function(input, output, session, main, triggers){
   observeEvent(input$add_linguistic_variable_btn, {
     linguistic_variable_name <- input$linguistic_variable_name_text
     
@@ -38,7 +38,6 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
         xlim = c(min = input$range_min_numeric, max = input$range_max_numeric)
       )
       rng <- c(min = input$range_min_numeric, max = input$range_max_numeric)
-      plot_variables[[linguistic_variable_name]] <- rng
       
       insertUI(
         selector = paste0('#', session$ns('linguistic_variable_ui_div')),
@@ -59,7 +58,6 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
   observe({
     triggers$uploaded_json$depend()
     lapply(main$fuzzy_inference_system$linguistic_variable_list, function(x_linguistic_variable){
-    # for(x_linguistic_variable in main$fuzzy_inference_system$linguistic_variable_list){
       insertUI(
         selector = paste0('#', session$ns('linguistic_variable_ui_div')),
         ui = linguistic_variable_ui(
@@ -73,9 +71,6 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
         main = main, triggers = triggers,
         linguistic_variable_name = x_linguistic_variable$name, rng = x_linguistic_variable$xlim
       )
-      
-      
     })
-    
   })
 }

@@ -6,25 +6,20 @@ library(listviewer)
 library(rhandsontable)
 library(jsonlite)
 
-
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
 source('add_fuzzy_rule_module.R')
 source('evaluation_module.R')
 source('linguistic_variable_module.R')
 source('fuzzy_set_module.R') 
-
 source('linguistic_variable_module.R')
-
 source('fuzzy_rule_module.R')
-
 source('simple_fuzzy_proposition_module.R')
 source('compound_fuzzy_proposition_module.R')
-
+source('negation_fuzzy_proposition_module.R')
 source('save_module.R')
 
 setwd('..')
-
 source('Main/membership_functions.R')
 source('Main/fuzzy_sets.R')
 source('Main/linguistic_variable.R')
@@ -37,7 +32,6 @@ source('Main/json_conversion.R')
 ui <- dashboardPage(
   dashboardHeader(),
   dashboardSidebar(
-    
     sidebarMenu(
       id = 'main_sidebar',
       menuItem('Upload', tabName = 'upload_tab', icon = icon('upload')),
@@ -70,10 +64,6 @@ server <- function(input, output, session) {
     added_linguistic_variable = make_reactive_trigger()
   )
   
-  plot_variables <- reactiveValues(
-    linguistic_variable_range_list = list()
-  )
-  
   callModule(
     upload_server, 'upload',
     main = main, triggers = triggers
@@ -81,14 +71,12 @@ server <- function(input, output, session) {
   
   callModule(
     add_linguistic_variable_server, 'add_linguistic_variable',
-    main = main, triggers = triggers,
-    plot_variables = plot_variables
+    main = main, triggers = triggers
   )
   
   callModule(
     add_fuzzy_rule_server, 'add_fuzzy_rule',
     main = main, triggers = triggers
-    # plot_variables = plot_variables
   )
   
   callModule(

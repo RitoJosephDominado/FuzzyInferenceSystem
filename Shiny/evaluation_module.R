@@ -39,9 +39,6 @@ evaluation_server <- function(input, output, session, main, triggers){
     uploaded_input_df = NULL,
     uploaded_output_df = NULL
   )
-  # isolate({
-  #   print(main$fuzzy_inference_system$linguistic_variable_list)
-  # })
   
   tables$input_df <- isolate({
     data.frame(
@@ -53,8 +50,7 @@ evaluation_server <- function(input, output, session, main, triggers){
     )
   })
   isolate({colnames(tables$input_df) <- names(main$fuzzy_inference_system$linguistic_variable_list)})
- 
-   #Event(input$num_rows_numeric,
+
   observe({
     triggers$added_linguistic_variable$depend()
     input_df <- data.frame(
@@ -71,7 +67,6 @@ evaluation_server <- function(input, output, session, main, triggers){
   
   
   output$input_hot <- renderRHandsontable({
-    # triggers$update_fuzzy_inference_system$depend()
     triggers$added_linguistic_variable$depend()
     if(length(main$fuzzy_inference_system$linguistic_variable_list) == 0) return(NULL)
     
