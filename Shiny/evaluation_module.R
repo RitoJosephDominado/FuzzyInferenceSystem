@@ -13,7 +13,6 @@ evaluation_ui <- function(name){
         width = 6,
         rHandsontableOutput(ns('output_hot'))
       )
-      
     ),
     tabPanel(
       title = 'Upload',

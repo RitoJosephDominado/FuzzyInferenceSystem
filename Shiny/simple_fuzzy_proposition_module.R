@@ -17,12 +17,10 @@ simple_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
     fuzzy_set_names <- names(main$fuzzy_inference_system$linguistic_variable_list[[selected_linguistic_variable]]$fuzzy_set_list)
   }
   
-  
-  
   box(
     width = 12, title = 'Simple fuzzy proposition', status = 'success', solidHeader = TRUE,
     fluidRow(
-      column(12, shinyWidgets::materialSwitch(ns('negate_switch'), strong('Negate'), status = 'primary'), style = 'color:black')
+      column(12, shinyWidgets::materialSwitch(ns('negate_switch'), strong('Negate'), status = 'primary', value = x_simple_fuzzy_proposition$negated), style = 'color:black')
     ),
     fluidRow(
       div(

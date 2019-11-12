@@ -22,10 +22,8 @@ save_ui <- function(ui_name){
 }
 
 save_server <- function(input, output, session, main, triggers){
-
   
   output$linguistic_variable_list_reactjson <- renderReactjson({
-    # shiny::validate(main$fuzzy_inference_system$linguistic_variable_list)
     triggers$update_fuzzy_inference_system$depend()
     main$fuzzy_inference_system$linguistic_variable_list %>% reactjson
   })

@@ -72,7 +72,6 @@ convert_environment_to_fuzzy_proposition <- function(x_environment){
 }
 
 
-
 convert_fuzzy_proposition_to_environment <- function(fuzzy_proposition){
   if(is.null(fuzzy_proposition)) return(NULL)
   if(fuzzy_proposition$type == 'simple_fuzzy_proposition'){
@@ -104,5 +103,3 @@ convert_fuzzy_proposition_to_environment <- function(fuzzy_proposition){
     )
   }
 }
-
-

@@ -23,7 +23,6 @@ z_membership_function <- function(p1, p2){
   }
 }
 
-
 trapezoidal_membership_function <- function(p1, p2, p3, p4){
   function(a){
     left_indices <- which(p1 < a & a < p2)
