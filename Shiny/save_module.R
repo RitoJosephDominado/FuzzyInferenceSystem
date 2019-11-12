@@ -15,6 +15,7 @@ save_ui <- function(ui_name){
     ),
     box(
       width = 6,
+      textInput(ns('file_name_text'), 'Filename', value = 'Fuzzy inference system'),
       actionButton(ns('save_fuzzy_inference_system_btn'), 'Save (.json)')
     )
   )
@@ -43,7 +44,8 @@ save_server <- function(input, output, session, main, triggers){
   })
   
   observeEvent(input$save_fuzzy_inference_system_btn, {
-    print('saving!')
-    
+    json <- main$fuzzy_inference_system %>% convert_FuzzyInferenceSystem_to_list %>% toJSON
+    write_json(json, paste0(input$file_name_text, '.json'))
+    showNotification('Saved json')
   })
 }

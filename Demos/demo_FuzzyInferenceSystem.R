@@ -3,18 +3,22 @@ source('Main/FuzzyInferenceSystem.R')
 source('Main/linguistic_variable.R')
 source('Main/membership_functions.R')
 source('Main/fuzzy_propositions.R')
-
+source('Main/fuzzy_sets.R')
 
 height <- linguistic_variable(
-  short = z_membership_function(150, 160), 
-  medium = trapezoidal_membership_function(145, 160, 175, 190),
-  tall = s_membership_function(170, 200)
+  name = 'height',
+  xlim = c(100, 250),
+  short = z_fuzzy_set(150, 160), 
+  medium = trapezoidal_fuzzy_set(145, 160, 175, 190),
+  tall = s_fuzzy_set(170, 200)
 )
 
 weight <- linguistic_variable(
-  light = z_membership_function(50, 65),
-  medium = trapezoidal_membership_function(45, 60, 80, 90),
-  heavy = s_membership_function(75, 95)
+  name = 'weight',
+  xlim = c(30, 120),
+  light = z_fuzzy_set(50, 65),
+  medium = trapezoidal_fuzzy_set(45, 60, 80, 90),
+  heavy = s_fuzzy_set(75, 95)
 )
 
 feature_df <- data.frame(
@@ -45,7 +49,7 @@ fis$fuzzy_proposition_list[['is_short_or_light']] <- union_fuzzy_proposition(
 
 fis$evaluate_fuzzy_proposition_list(feature_df = feature_df)
 
-fis$plot_feature(feature_df[3,], 'height', 100:220)
+fis$plot_feature(feature_df[2,], 'height')
 feature_df
 
 

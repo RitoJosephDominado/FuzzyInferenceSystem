@@ -39,21 +39,43 @@ evaluation_server <- function(input, output, session, main, triggers){
     uploaded_input_df = NULL,
     uploaded_output_df = NULL
   )
+  # isolate({
+  #   print(main$fuzzy_inference_system$linguistic_variable_list)
+  # })
   
-  
-  output$input_hot <- renderRHandsontable({
-    triggers$update_fuzzy_inference_system$depend()
-    if(length(main$fuzzy_inference_system$linguistic_variable_list) == 0) return(NULL)
-    
-    default_df <- data.frame(
+  tables$input_df <- isolate({
+    data.frame(
       matrix(
         0, 
-        nrow = input$num_rows_numeric, 
+        nrow = 1, 
         ncol = length(main$fuzzy_inference_system$linguistic_variable_list)
       )
     )
-    colnames(default_df) <- names(main$fuzzy_inference_system$linguistic_variable_list)
+  })
+  isolate({colnames(tables$input_df) <- names(main$fuzzy_inference_system$linguistic_variable_list)})
+ 
+   #Event(input$num_rows_numeric,
+  observe({
+    triggers$added_linguistic_variable$depend()
+    input_df <- data.frame(
+      matrix(
+        0,
+        nrow = input$num_rows_numeric,
+        ncol = length(main$fuzzy_inference_system$linguistic_variable_list)
+      )
+    )
+    colnames(input_df) <- names(main$fuzzy_inference_system$linguistic_variable_list)
+
+    tables$input_df <- input_df
+  })
+  
+  
+  output$input_hot <- renderRHandsontable({
+    # triggers$update_fuzzy_inference_system$depend()
+    triggers$added_linguistic_variable$depend()
+    if(length(main$fuzzy_inference_system$linguistic_variable_list) == 0) return(NULL)
     
+    default_df <- tables$input_df
     rhandsontable(default_df)
   })
   
@@ -65,6 +87,6 @@ evaluation_server <- function(input, output, session, main, triggers){
     input_df <- hot_to_r(input$input_hot)
     output_df <- main$fuzzy_inference_system$evaluate_fuzzy_proposition_list(input_df)
     colnames(output_df) <- names(main$fuzzy_inference_system$fuzzy_proposition_list)
-    rhandsontable(output_df)
+    rhandsontable(output_df, readOnly = TRUE)
   })
 }

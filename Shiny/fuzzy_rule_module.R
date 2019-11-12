@@ -1,21 +1,15 @@
 
-fuzzy_rule_ui <- function(ui_name, index){
+fuzzy_rule_ui <- function(ui_name, main, index){
   ns <- NS(ui_name)
+  name <- names(main$fuzzy_inference_system$fuzzy_proposition_list)[index]
+  if(is.null(name) || grepl('^\\s*$', name)){
+    name <- paste('Rule', index)
+  }
   box(
     width = 12, title= paste('Fuzzy rule', index), background = 'red',
-    # reactjsonOutput(ns('main_reactjson')),
-    # fluidRow(
-    #   column(4, h4('Fuzzy rules')),
-    #   column(4, selectInput(ns('fuzzy_proposition_type_select'), 'Type', choices = c(
-    #     Simple = 'simple_fuzzy_proposition',
-    #     Intersection = 'intersection_fuzzy_proposition',
-    #     Union = 'union_fuzzy_proposition'
-    #   ))),
-      # column(4, actionButton(ns('add_fuzzy_proposition_btn'), 'Add'))
-    # ),
     column(7, tags$div(id = ns('fuzzy_proposition_ui_div'))),
     column(2, h3('THEN')),
-    column(3, textInput(ns('consequent_text'), 'Consequent', value = paste('Rule', index)))
+    column(3, textInput(ns('consequent_text'), 'Consequent', value = name))
   )
 }
 
@@ -58,9 +52,6 @@ fuzzy_rule_server <- function(input, output, session, main, triggers, parent = N
   
   observeEvent(input$consequent_text, {
     names(main$fuzzy_proposition_environment_list)[index] <- input$consequent_text
-    print('changed fis fuzzy prop name------------------------')
-    print(names(main$fuzzy_proposition_environment_list)[index])
-    
   })
 }
 

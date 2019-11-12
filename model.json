@@ -1,0 +1,1 @@
+["{\"linguistic_variable_list\":{\"asdf\":{\"zxc\":{\"type\":[\"z_fuzzy_set\"],\"p1\":[11],\"p2\":[35]},\"b\":{\"type\":[\"gaussian_fuzzy_set\"],\"gaussian_mean\":[44],\"gaussian_sd\":[22]}}},\"fuzzy_proposition_list\":{\"Rule 1sdfg\":{\"type\":[\"simple_fuzzy_proposition\"],\"linguistic_variable_name\":[\"asdf\"],\"fuzzy_set_name\":[\"zxc\"]}}}"]

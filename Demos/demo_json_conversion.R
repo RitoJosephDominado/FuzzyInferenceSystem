@@ -1,19 +1,28 @@
 getwd()
+rm(list = ls())
 source('Main/FuzzyInferenceSystem.R')
 source('Main/json_conversion.R')
 source('Main/fuzzy_sets.R')
+source('Main/linguistic_variable.R')
+
+source('Main/membership_functions.R')
+source('Main/fuzzy_propositions.R')
+
 height <- linguistic_variable(
+  name = 'height',
+  xlim = c(130, 250),
   short = z_fuzzy_set(150, 160), 
   medium = trapezoidal_fuzzy_set(145, 160, 175, 190),
   tall = s_fuzzy_set(170, 200)
 )
 
 weight <- linguistic_variable(
+  name = 'weight',
+  xlim = c(40, 110),
   light = z_fuzzy_set(50, 65),
   medium = trapezoidal_fuzzy_set(45, 60, 80, 90),
   heavy = s_fuzzy_set(75, 95)
 )
-
 
 fis <- FuzzyInferenceSystem$new()
 fis$linguistic_variable_list <- list(height = height, weight = weight)
@@ -47,16 +56,21 @@ rownames(feature_df) <- c('bob', 'dee', 'charlie', 'frank')
 fis$evaluate_fuzzy_proposition_list(feature_df)
 
 fis_list <- convert_FuzzyInferenceSystem_to_list(fis)
-  
+fis$linguistic_variable_list %>% str
+fis_list %>% str
 fis_from_list <- convert_list_to_FuzzyInferenceSystem(fis_list)
+fis_from_list$linguistic_variable_list %>% str
+fis_list$linguistic_variable_list
+
 
 fis$evaluate_fuzzy_proposition_list(feature_df)
 fis_from_list$evaluate_fuzzy_proposition_list(feature_df)
 
-
+fis_from_list$linguistic_variable_list %>% str
 
 # ----
-reactjson(fis_list)
+fis_list$linguistic_variable_list
+reactjson(fis_list$linguistic_variable_list)
 
 fis_list %>% toJSON() %>% write_json('Data/demo1.json')
 

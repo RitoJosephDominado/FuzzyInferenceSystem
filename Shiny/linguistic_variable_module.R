@@ -49,6 +49,26 @@ linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
 
 
 linguistic_variable_server <- function(input, output, session, main, triggers, linguistic_variable_name, rng){
+  fuzzy_set_list <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list
+  if(length(fuzzy_set_list) > 0){
+    lapply(seq_along(fuzzy_set_list), function(i){
+      fuzzy_set_name <- names(fuzzy_set_list)[i]
+      ui_name <- paste0(linguistic_variable_name, '-', fuzzy_set_name)
+      insertUI(
+        selector = paste0('#', session$ns('fuzzy_set_ui_div')),
+        ui = fuzzy_set_ui(ui_name = session$ns(ui_name), linguistic_variable_name = linguistic_variable_name, fuzzy_set_name = fuzzy_set_name)
+      )
+
+      callModule(
+        fuzzy_set_server, ui_name,
+        main = main, triggers = triggers,
+        linguistic_variable_name = linguistic_variable_name,
+        fuzzy_set_name = fuzzy_set_name
+      )
+    })
+  }
+  
+  
   local_triggers <- reactiveValues(
     added_fuzzy_set = make_reactive_trigger()
   )
@@ -109,8 +129,8 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
       gaussian_fuzzy_set(input$gaussian_mean_numeric, input$gaussian_sd_numeric)
     }
     
-    main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]][[fuzzy_set_name]] <- fuzzy_set
-    
+    main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list[[fuzzy_set_name]] <- fuzzy_set
+
     ui_name <- paste0(linguistic_variable_name, '-', fuzzy_set_name)
     insertUI(
       selector = paste0('#', session$ns('fuzzy_set_ui_div')),
@@ -131,15 +151,17 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
   output$main_plot <- renderPlot({
     local_triggers$added_fuzzy_set$depend()
     lv <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]
-    if(length(lv) > 0){
+    if(length(lv$fuzzy_set_list) > 0){
       x_values <- seq(rng[1], rng[2], length.out = 100)
-      plot(x_values, lv[[1]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]), ylim = c(0, 1))
+      plot(x_values, lv$fuzzy_set_list[[1]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]), ylim = c(0, 1))
       
-      if(length(lv) > 1){
-        for(i in 2:length(lv)){
-          lines(x_values, lv[[i]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]))
-        }
+      if(length(lv$fuzzy_set_list) > 1){
+        lapply(2:length(lv$fuzzy_set_list), function(i){
+        # for(i in 2:length(lv$fuzzy_set_list)){
+          lines(x_values, lv$fuzzy_set_list[[i]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]))
+        })
       }
     }
   })
+
 }

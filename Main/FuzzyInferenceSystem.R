@@ -17,13 +17,20 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition_list', function(f
 })
 
 FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_proposition, feature_df){
+  
+  
   if(fuzzy_proposition$type == 'simple_fuzzy_proposition'){
     linguistic_variable_name <- fuzzy_proposition$linguistic_variable_name
     fuzzy_set_name <- fuzzy_proposition$fuzzy_set_name
-    membership_function <- self$linguistic_variable_list[[linguistic_variable_name]][[fuzzy_set_name]]$membership_function
+    membership_function <- self$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list[[fuzzy_set_name]]$membership_function
     
+    if(is.null(membership_function)){
+      membership_df <- rep(NA_real_, nrow(feature_df))
+      return(membership_df)
+    }
     membership_df <- membership_function(feature_df[, linguistic_variable_name])
-    
+    print('----- DF _------')
+    print(membership_df)
     return(membership_df)
   }else if(fuzzy_proposition$type == 'union_fuzzy_proposition'){
     result_list <- map(fuzzy_proposition$argument_list, self$evaluate_fuzzy_proposition, feature_df = feature_df)
@@ -38,12 +45,13 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_
   }
 })
 
-FuzzyInferenceSystem$set('public', 'plot_feature', function(features, linguistic_variable_name, rng){
-  linguistic_variable <- self$linguistic_variable_list[[linguistic_variable_name]]
-  num_fuzzy_sets <- length(linguistic_variable)
-  plot(rng, linguistic_variable[[1]](rng), type = 'o')
+FuzzyInferenceSystem$set('public', 'plot_feature', function(features, linguistic_variable_name){
+  x_linguistic_variable <- self$linguistic_variable_list[[linguistic_variable_name]]
+  num_fuzzy_sets <- length(x_linguistic_variable)
+  rng <- seq(from = x_linguistic_variable$xlim[1], to = x_linguistic_variable$xlim[2], length.out = 100)
+  plot(rng, x_linguistic_variable$fuzzy_set_list[[1]]$membership_function(rng), type = 'o')
   for(i in seq_len(num_fuzzy_sets)[-1]){
-    lines(rng, linguistic_variable[[i]](rng), type = 'o')
+    lines(rng, x_linguistic_variable$fuzzy_set_list[[i]]$membership_function(rng), type = 'o')
   }
   abline(v = features[linguistic_variable_name], col = 'red', lwd = 2)
 })

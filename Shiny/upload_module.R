@@ -23,6 +23,13 @@ upload_ui <- function(name){
 
 upload_server <- function(input, output, session, main, triggers){
   observeEvent(input$upload_fuzzy_inference_system_json, {
-    print('ok ok')
+    json <- read_json(input$fuzzy_inference_system_json_file$datapath)
+    fis <- json[[1]] %>% fromJSON(simplifyDataFrame = FALSE) %>% convert_list_to_FuzzyInferenceSystem
+    main$fuzzy_inference_system <- fis
+    
+    main$fuzzy_proposition_environment_list <- fis$fuzzy_proposition_list %>% map(convert_fuzzy_proposition_to_environment)
+    
+    showNotification('Uploaded json')
+    triggers$uploaded_json$trigger()
   })
 }

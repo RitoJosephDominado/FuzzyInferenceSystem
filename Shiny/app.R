@@ -6,6 +6,7 @@ library(listviewer)
 library(rhandsontable)
 library(jsonlite)
 
+
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
 source('add_fuzzy_rule_module.R')
@@ -30,8 +31,8 @@ source('Main/linguistic_variable.R')
 source('Main/fuzzy_propositions.R')
 source('Main/FuzzyInferenceSystem.R')
 source('Main/fuzzy_proposition_environments.R')
-
-
+source('Main/translate_fuzzy_proposition.R')
+source('Main/json_conversion.R')
 
 ui <- dashboardPage(
   dashboardHeader(),
