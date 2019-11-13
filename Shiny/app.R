@@ -5,6 +5,7 @@ library(R6)
 library(listviewer)
 library(rhandsontable)
 library(jsonlite)
+library(reactlog)
 
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
@@ -28,6 +29,8 @@ source('Main/FuzzyInferenceSystem.R')
 source('Main/fuzzy_proposition_environments.R')
 source('Main/translate_fuzzy_proposition.R')
 source('Main/json_conversion.R')
+
+options(shiny.reactlog = TRUE)
 
 ui <- dashboardPage(
   dashboardHeader(),
@@ -55,7 +58,8 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
   main <- reactiveValues(
     fuzzy_inference_system = FuzzyInferenceSystem$new(),
-    fuzzy_proposition_environment_list = list()
+    fuzzy_proposition_environment_list = list(),
+    linguistic_variable_counter = 0
   )
   
   triggers <- reactiveValues(

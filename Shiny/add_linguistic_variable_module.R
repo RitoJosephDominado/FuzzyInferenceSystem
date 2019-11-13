@@ -39,16 +39,23 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
       )
       rng <- c(min = input$range_min_numeric, max = input$range_max_numeric)
       
+      main$linguistic_variable_counter <- main$linguistic_variable_counter + 1
+     
       insertUI(
         selector = paste0('#', session$ns('linguistic_variable_ui_div')),
-        ui = linguistic_variable_ui(ui_name = session$ns(linguistic_variable_name), linguistic_variable_name = linguistic_variable_name)
+        ui = linguistic_variable_ui(
+          ui_name = session$ns(linguistic_variable_name), 
+          main = main,
+          linguistic_variable_name = linguistic_variable_name
+        )
       )
-      
+
       callModule(
         linguistic_variable_server, id = linguistic_variable_name,
         main = main, triggers = triggers,
         linguistic_variable_name = linguistic_variable_name, rng = rng
       )
+      
       triggers$added_linguistic_variable$trigger()
     }
   })
@@ -62,6 +69,7 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
         selector = paste0('#', session$ns('linguistic_variable_ui_div')),
         ui = linguistic_variable_ui(
           ui_name = session$ns(x_linguistic_variable$name),
+          main = main,
           linguistic_variable_name = x_linguistic_variable$name
         )
       )

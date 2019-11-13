@@ -1,57 +1,57 @@
 
 
-linguistic_variable_ui <- function(ui_name, linguistic_variable_name){
+linguistic_variable_ui <- function(ui_name, main, linguistic_variable_name){
   ns <- NS(ui_name)
+  lv <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]
   
-  box(
-    width = 12, 
-    
-    title = linguistic_variable_name,
-    tags$div(
-      div(
-        column(width = 6, align = 'right', actionButton(ns('delete_btn'), 'Delete'))
-      ),
-      id = ns('add_fuzzy_set_div'),
+  div(
+    id = ns('linguistic_variable_div'),
+    box(
+      width = 12, 
+      title = linguistic_variable_name,
       box(
-        width = 12, title = 'Add Fuzzy Set', collapsible = TRUE,
-        status = 'primary', solidHeader = TRUE,
-        fluidRow(
-          div(
-            class = 'col-sm-12 col-md-12 col-lg-6',
-            box(
-              width = 12, title = 'Parameters', status = 'success', solidHeader = TRUE,
-              column(4, textInput(ns('fuzzy_set_name_text'), 'Name')),
-              column(6, selectInput(ns('fuzzy_set_type_select'), 'Type', choices = c(
-                'Z-shaped' = 'z',
-                'S-shaped' = 's',
-                'Trapezoidal' = 'trapezoidal',
-                'Gaussian' = 'gaussian'
-              ))),
-              uiOutput(ns('parameters_ui')),
-              fluidRow(column(4, actionButton(ns('add_fuzzy_set_btn'), 'Add')))
+        width = 12,
+        column(4, p(paste0('Min: ', lv$xlim[1], '\t Max: ', lv$xlim[2]))),
+        column(6, actionButton(ns('delete_btn'), 'Delete'), br())
+      ),
+      tags$div(
+        id = ns('add_fuzzy_set_div'),
+        box(
+          width = 12, title = 'Add Fuzzy Set', collapsible = TRUE,
+          status = 'primary', solidHeader = TRUE,
+          fluidRow(
+            div(
+              class = 'col-sm-12 col-md-12 col-lg-6',
+              box(
+                width = 12, title = 'Parameters', status = 'success', solidHeader = TRUE,
+                column(4, textInput(ns('fuzzy_set_name_text'), 'Name')),
+                column(6, selectInput(ns('fuzzy_set_type_select'), 'Type', choices = c(
+                  'Z-shaped' = 'z',
+                  'S-shaped' = 's',
+                  'Trapezoidal' = 'trapezoidal',
+                  'Gaussian' = 'gaussian'
+                ))),
+                uiOutput(ns('parameters_ui')),
+                fluidRow(column(4, actionButton(ns('add_fuzzy_set_btn'), 'Add')))
+              )
+            ),
+            div(
+              class = 'col-sm-12 col-md-12 col-lg-6',
+              box(
+                width = 12, title = 'Plot', status = 'success', solidHeader = TRUE,
+                plotOutput(ns('main_plot'))
+              )
             )
-          ),
-          div(
-            # 6,
-            class = 'col-sm-12 col-md-12 col-lg-6',
-            box(
-              width = 12, title = 'Plot', status = 'success', solidHeader = TRUE,
-              plotOutput(ns('main_plot'))
-            )
-            
-          ),
-          box(
-            width = 12,
-            column(width = 12, align = 'right', actionButton('hey', 'ehy'))
           )
         )
+      ),
+      box(
+        title = 'Fuzzy Sets', width = 12, background = 'light-blue',
+        tags$div(id = ns('fuzzy_set_ui_div'))
       )
-    ),
-    box(
-      title = 'Fuzzy Sets', width = 12, background = 'light-blue',
-      tags$div(id = ns('fuzzy_set_ui_div'))
     )
   )
+  
 }
 
 
@@ -104,15 +104,14 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
   })
   
   
-  observeEvent(input$add_fuzzy_set_btn, {
-    
+  o <- observeEvent(input$add_fuzzy_set_btn, ignoreInit = TRUE, {
     fuzzy_set_name <- input$fuzzy_set_name_text
     
     if(fuzzy_set_name %in% names(main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list)){
       showModal(
         modalDialog(
           title = 'Invalid Fuzzy Set Name',
-          p(paste0('A fuzzy set with that name has already been added to ', linguistic_variable_name))
+          p(paste0('A fuzzy set with the name "', fuzzy_set_name, '" has already been added to ', linguistic_variable_name))
         )
       )
       return(NULL)
@@ -158,6 +157,7 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
   output$main_plot <- renderPlot({
     local_triggers$added_fuzzy_set$depend()
     lv <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]
+
     if(length(lv$fuzzy_set_list) > 0){
       x_values <- seq(rng[1], rng[2], length.out = 100)
       plot(x_values, lv$fuzzy_set_list[[1]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]), ylim = c(0, 1))
@@ -169,6 +169,24 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
         })
       }
     }
+  })
+  
+  observeEvent(input$delete_btn, ignoreInit = TRUE, {
+    o$destroy()
+    
+    removeUI(
+      selector = paste0('#', session$ns('fuzzy_set_ui_div'))
+    )
+    
+    removeUI(
+      selector = paste0('#', session$ns('linguistic_variable_div'))
+    )
+    # lapply(seq_along(main$fuzzy_inferenc_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list), function(i){
+    #   main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list[[i]] <- NULL
+    # })
+    main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]] <- NULL
+    triggers$update_fuzzy_inference_system$trigger()
+    # print(str(main$fuzzy_inference_system$linguistic_variable_list))
   })
 
 }

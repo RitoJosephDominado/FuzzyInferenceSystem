@@ -16,7 +16,8 @@ add_fuzzy_rule_ui <- function(name){
         actionButton(ns('add_fuzzy_rule_btn'), 'Add')
       )
     ),
-    tags$div(id = ns('fuzzy_rule_ui_div'))
+    tags$div(id = ns('fuzzy_rule_ui_div')),
+    p('-')
   )
 }
 

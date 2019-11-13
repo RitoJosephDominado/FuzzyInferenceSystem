@@ -52,6 +52,8 @@ evaluation_server <- function(input, output, session, main, triggers){
 
   observe({
     triggers$added_linguistic_variable$depend()
+    triggers$update_fuzzy_inference_system$depend()
+    
     input_df <- data.frame(
       matrix(
         0,
@@ -67,6 +69,7 @@ evaluation_server <- function(input, output, session, main, triggers){
   
   output$input_hot <- renderRHandsontable({
     triggers$added_linguistic_variable$depend()
+    
     if(length(main$fuzzy_inference_system$linguistic_variable_list) == 0) return(NULL)
     
     default_df <- tables$input_df

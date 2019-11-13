@@ -67,7 +67,7 @@ simple_fuzzy_proposition_server <- function(input, output, session, main, trigge
     selected_fuzzy_set <- input$fuzzy_set_select
     linguistic_variable_names <- names(main$fuzzy_inference_system$linguistic_variable_list)
     
-    if(is.null(selected_linguistic_variable)){
+    if(is.null(selected_linguistic_variable) || (grepl('^\\s*$', selected_linguistic_variable)) || length(main$fuzzy_inference_system$linguistic_variable_list[[selected_linguistic_variable]]$fuzzy_set_list) == 0){
       fuzzy_set_names <- ''
     }else{
       fuzzy_set_names <- names(main$fuzzy_inference_system$linguistic_variable_list[[selected_linguistic_variable]]$fuzzy_set_list)
