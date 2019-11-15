@@ -69,9 +69,13 @@ server <- function(input, output, session) {
     added_linguistic_variable = make_reactive_trigger()
   )
   
+  uploaded <- reactiveValues(
+    fuzzy_inference_system = NULL
+  )
+  
   callModule(
     upload_server, 'upload',
-    main = main, triggers = triggers
+    main = main, triggers = triggers, uploaded = uploaded
   )
   
   callModule(
