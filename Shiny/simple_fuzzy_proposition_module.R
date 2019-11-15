@@ -20,18 +20,21 @@ simple_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
   box(
     width = 12, title = 'Simple fuzzy proposition', status = 'success', solidHeader = TRUE,
     fluidRow(
-      column(12, shinyWidgets::materialSwitch(ns('negate_switch'), strong('Negate'), status = 'primary', value = x_simple_fuzzy_proposition$negated), style = 'color:black')
+      column(6, shinyWidgets::materialSwitch(ns('negate_switch'), strong('Negate'), status = 'primary', value = x_simple_fuzzy_proposition$negated))
     ),
+    
     fluidRow(
       div(
-        class = 'col-sm-12 col-md-5 col-lg-5',
-        
+        class = 'col-sm-8 col-md-5 col-lg-5',
         selectInput(ns('linguistic_variable_select'), 'Linguistic variable', choices = linguistic_variables, selected = selected_linguistic_variable)
       ),
       column(2, br(), textOutput(ns('is_negated_text')), br()),
-      column(5, selectInput(ns('fuzzy_set_select'), 'Fuzzy set', choices = fuzzy_set_names, selected = selected_fuzzy_set))
+      div(
+        class = 'col-sm-8 col-md-5 col-lg-5',
+        selectInput(ns('fuzzy_set_select'), 'Fuzzy set', choices = fuzzy_set_names, selected = selected_fuzzy_set)
+      )
     )
-  )
+  ) %>% div(id = ns('simple_fuzzy_proposition_div'))
 }
 
 

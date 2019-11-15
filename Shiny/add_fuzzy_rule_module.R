@@ -36,17 +36,18 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
     }else if(input$fuzzy_proposition_type_select == 'negation_fuzzy_proposition'){
       fuzzy_proposition <- negation_fuzzy_proposition()
     }
+    main$fuzzy_proposition_counter <- main$fuzzy_proposition_counter + 1
+    index <- main$fuzzy_proposition_counter
+    main$fuzzy_inference_system$fuzzy_proposition_list[[paste0('rule', index)]] <- fuzzy_proposition
+    main$consequent_vec[paste0('rule', index)] <- paste0('rule', index)
+    main$fuzzy_proposition_environment_list[[paste0('rule', index)]] <- convert_fuzzy_proposition_to_environment(fuzzy_proposition)
     
-    index <- length(main$fuzzy_inference_system$fuzzy_proposition_list) + 1
-    main$fuzzy_inference_system$fuzzy_proposition_list[[index]] <- fuzzy_proposition
-    main$fuzzy_proposition_environment_list[[index]] <- convert_fuzzy_proposition_to_environment(fuzzy_proposition)
-
     insertUI(
       selector = paste0('#', session$ns('fuzzy_rule_ui_div')),
       ui = fuzzy_rule_ui(
         session$ns(index),
         main = main,
-        index = index
+        index = paste0('rule', index)
       )
     )
     
@@ -54,7 +55,7 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
       fuzzy_rule_server, index,
       main = main, triggers = triggers,
       parent = main$fuzzy_proposition_environment_list,
-      index = index
+      index = paste0('rule', index)
     )
     
   })
@@ -68,7 +69,7 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
           ui = fuzzy_rule_ui(
             session$ns(i),
             main = main,
-            index = i
+            index = paste0('rule', i)
           )
         )
         
@@ -76,12 +77,10 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
           fuzzy_rule_server, i,
           main = main, triggers = triggers,
           parent = main$fuzzy_proposition_environment_list,
-          index = i
+          index = paste0('rule', i)
         )
       })
     })
-    
-    
   })
 }
 

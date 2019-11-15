@@ -11,18 +11,17 @@ compound_fuzzy_proposition_ui <- function(ui_name, main, parent, index){
     width = 12, title = fuzzy_proposition_type, status = 'primary', solidHeader = TRUE,
     
     fluidRow(
-      column(4, selectInput(ns('fuzzy_proposition_type_select'), 'Type', choices = c(
+      column(3, selectInput(ns('fuzzy_proposition_type_select'), 'Type', choices = c(
         Simple = 'simple_fuzzy_proposition',
         Intersection = 'intersection_fuzzy_proposition',
         Union = 'union_fuzzy_proposition'
       ))),
-      column(4, br(), actionButton(ns('add_fuzzy_proposition_btn'), 'Add')),
+      column(3, br(), actionButton(ns('add_fuzzy_proposition_btn'), 'Add')),
       column(
-        4, 
+        3, br(),
         shinyWidgets::materialSwitch(
           ns('negate_switch'), strong('Negate'), status = 'primary', value = parent[[index]]$negated
-        ), 
-        style = 'color:black'
+        )
       )
     ),
     tags$div(id = ns('fuzzy_proposition_ui_div'))

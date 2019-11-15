@@ -4,7 +4,7 @@ simple_fuzzy_proposition_environment <- function(linguistic_variable_name, fuzzy
     type = 'simple_fuzzy_proposition',
     linguistic_variable_name = linguistic_variable_name,
     fuzzy_set_name = fuzzy_set_name,
-    negated = FALSE
+    negated = negated
   )
 }
 
@@ -72,27 +72,36 @@ convert_environment_to_fuzzy_proposition <- function(x_environment){
 }
 
 
+
+
 convert_fuzzy_proposition_to_environment <- function(fuzzy_proposition){
   if(is.null(fuzzy_proposition)) return(NULL)
   if(fuzzy_proposition$type == 'simple_fuzzy_proposition'){
     return(
       simple_fuzzy_proposition_environment(
         fuzzy_proposition$linguistic_variable_name,
-        fuzzy_proposition$fuzzy_set_name
+        fuzzy_proposition$fuzzy_set_name,
+        fuzzy_proposition$negated
       )
     )
   }else if(fuzzy_proposition$type == 'intersection_fuzzy_proposition'){
     return(
       do.call(
         intersection_fuzzy_proposition_environment,
-        map(fuzzy_proposition$argument_list, convert_fuzzy_proposition_to_environment)
+        c(
+          map(fuzzy_proposition$argument_list, convert_fuzzy_proposition_to_environment),
+          negated = fuzzy_proposition$negated
+        )
       )
     )
   }else if(fuzzy_proposition$type == 'union_fuzzy_proposition'){
     return(
       do.call(
         union_fuzzy_proposition_environment,
-        map(fuzzy_proposition$argument_list, convert_fuzzy_proposition_to_environment)
+        c(
+          map(fuzzy_proposition$argument_list, convert_fuzzy_proposition_to_environment),
+          negated = fuzzy_proposition$negated
+        )
       )
     )
   }else if(fuzzy_proposition$type == 'negation_fuzzy_proposition'){

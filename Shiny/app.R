@@ -59,7 +59,8 @@ server <- function(input, output, session) {
   main <- reactiveValues(
     fuzzy_inference_system = FuzzyInferenceSystem$new(),
     fuzzy_proposition_environment_list = list(),
-    linguistic_variable_counter = 0
+    fuzzy_proposition_counter = 0,
+    consequent_vec = NULL
   )
   
   triggers <- reactiveValues(
@@ -96,6 +97,7 @@ server <- function(input, output, session) {
   observeEvent(input$main_sidebar, {
     triggers$update_fuzzy_inference_system$trigger()
     main$fuzzy_inference_system$fuzzy_proposition_list <- map(main$fuzzy_proposition_environment_list, convert_environment_to_fuzzy_proposition)
+    names(main$fuzzy_inference_system$fuzzy_proposition_list) <- main$consequent_vec
   })
 }
 

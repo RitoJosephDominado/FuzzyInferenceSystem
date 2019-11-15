@@ -59,9 +59,9 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_
 
 FuzzyInferenceSystem$set('public', 'plot_feature', function(features, linguistic_variable_name){
   x_linguistic_variable <- self$linguistic_variable_list[[linguistic_variable_name]]
-  num_fuzzy_sets <- length(x_linguistic_variable)
+  num_fuzzy_sets <- length(x_linguistic_variable$fuzzy_set_list)
   rng <- seq(from = x_linguistic_variable$xlim[1], to = x_linguistic_variable$xlim[2], length.out = 100)
-  plot(rng, x_linguistic_variable$fuzzy_set_list[[1]]$membership_function(rng), type = 'o')
+  plot(rng, x_linguistic_variable$fuzzy_set_list[[1]]$membership_function(rng), type = 'o', ylab = 'Membership', xlab = linguistic_variable_name)
   for(i in seq_len(num_fuzzy_sets)[-1]){
     lines(rng, x_linguistic_variable$fuzzy_set_list[[i]]$membership_function(rng), type = 'o')
   }

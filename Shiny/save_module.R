@@ -32,7 +32,7 @@ save_server <- function(input, output, session, main, triggers){
     triggers$update_fuzzy_inference_system$depend()
     
     main$fuzzy_inference_system$fuzzy_proposition_list <- map(main$fuzzy_proposition_environment_list, convert_environment_to_fuzzy_proposition)
-    
+    names(main$fuzzy_inference_system$fuzzy_proposition_list) <- main$consequent_vec
     main$fuzzy_inference_system$fuzzy_proposition_list %>% reactjson
   })
   

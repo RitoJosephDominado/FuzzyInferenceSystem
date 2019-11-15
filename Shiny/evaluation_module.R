@@ -83,7 +83,7 @@ evaluation_server <- function(input, output, session, main, triggers){
     req(input$input_hot)
     input_df <- hot_to_r(input$input_hot)
     output_df <- main$fuzzy_inference_system$evaluate_fuzzy_proposition_list(input_df)
-    colnames(output_df) <- names(main$fuzzy_inference_system$fuzzy_proposition_list)
+    colnames(output_df) <- unname(main$consequent_vec)
     rhandsontable(output_df, readOnly = TRUE)
   })
 }

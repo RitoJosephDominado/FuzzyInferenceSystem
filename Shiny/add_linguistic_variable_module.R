@@ -38,8 +38,6 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
         xlim = c(min = input$range_min_numeric, max = input$range_max_numeric)
       )
       rng <- c(min = input$range_min_numeric, max = input$range_max_numeric)
-      
-      main$linguistic_variable_counter <- main$linguistic_variable_counter + 1
      
       insertUI(
         selector = paste0('#', session$ns('linguistic_variable_ui_div')),
