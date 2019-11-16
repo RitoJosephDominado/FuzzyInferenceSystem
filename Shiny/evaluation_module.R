@@ -5,19 +5,30 @@ evaluation_ui <- function(name){
     tabPanel(
       title = 'Manual',
       numericInput(ns('num_rows_numeric'), 'Number of rows', 1, 0, 1000, 1),
-      column(
-        width = 6,
-        rHandsontableOutput(ns('input_hot'))
+      
+      box(
+        width = 6, title = 'Inputs', status = 'primary', solidHeader = TRUE,
+        rHandsontableOutput(ns('input_hot')),
+        br(),
+        fluidRow(
+          column(6, textInput(ns('input_df_filename_text'), 'Filename')),
+          column(6, br(), actionButton(ns('save_input_df_btn'), 'Save'))
+        )
       ),
-      column(
-        width = 6,
-        rHandsontableOutput(ns('output_hot'))
+      box(
+        width = 6, title = 'Ouputs', status = 'primary', solidHeader = TRUE,
+        rHandsontableOutput(ns('output_hot')),
+        br(),
+        fluidRow(
+          column(6, textInput(ns('output_df_filename_text'), 'Filename')),
+          column(6, br(), actionButton(ns('save_output_df_btn'), 'Save'))
+        )
       )
     ),
     tabPanel(
       title = 'Upload',
-      column(6, fileInput(ns('features_file'), 'Upload (.csv)')),
-      column(4, br(), actionButton(ns('upload_features_btn'), 'Upload')),
+      column(6, fileInput(ns('features_file'), 'Upload (.csv)', width = '100%')),
+      column(3, br(), actionButton(ns('upload_features_btn'), 'Upload')),
       column(
         width = 6,
         rHandsontableOutput(ns('uploaded_input_hot'))
@@ -85,5 +96,46 @@ evaluation_server <- function(input, output, session, main, triggers){
     output_df <- main$fuzzy_inference_system$evaluate_fuzzy_proposition_list(input_df)
     colnames(output_df) <- unname(main$consequent_vec)
     rhandsontable(output_df, readOnly = TRUE)
+  })
+  
+  
+  observeEvent(input$save_input_df_btn, {
+    filename <- input$input_df_filename_text
+    
+    if(grepl('^\\s*$', filename)){
+      shinyalert(
+        'Invalid Filename',
+        'Can\'t use a filename with just whitespace',
+        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
+      )
+      return(NULL)
+    }else{
+      input_df <- input$input_hot %>% hot_to_r
+      write_csv(input_df, path = paste0('Data/', filename, '.csv'))
+      shinyalert(
+        'Saved', paste0('Successfully saved ', filename, '.csv'),
+        type = 'success'
+      )
+    }
+  })
+  
+  observeEvent(input$save_output_df_btn, {
+    filename <- input$output_df_filename_text
+    
+    if(grepl('^\\s*$', filename)){
+      shinyalert(
+        'Invalid Filename',
+        'Can\'t use a filename with just whitespace',
+        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
+      )
+      return(NULL)
+    }else{
+      input_df <- input$input_hot %>% hot_to_r
+      write_csv(input_df, path = paste0('Outputs/', filename, '.csv'))
+      shinyalert(
+        'Saved', paste0('Successfully saved ', filename, '.csv'),
+        type = 'success'
+      )
+    }
   })
 }

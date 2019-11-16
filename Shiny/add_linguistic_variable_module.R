@@ -9,9 +9,8 @@ add_linguistic_variable_ui <- function(name){
       column(3, numericInput(ns('range_max_numeric'), 'Max', 100, -10000, 10000, 0.1)),
       column(2, br(), actionButton(ns('add_linguistic_variable_btn'), 'Add'))
     ),
-    tags$div(id = ns('linguistic_variable_ui_div'))
-    
-  )
+    tags$div(id = ns('linguistic_variable_ui_div')),
+  ) %>% div(p('-'))
 }
 
 add_linguistic_variable_server <- function(input, output, session, main, triggers){
@@ -19,18 +18,15 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
     linguistic_variable_name <- input$linguistic_variable_name_text
     
     if(linguistic_variable_name %in% names(main$fuzzy_inference_system$linguistic_variable_list)){
-      showModal(
-        modalDialog(
-          title = 'Invalid Linguistic Variable Name',
-          p('A linguistic variable with that name has already been added')
-        )
+      shinyalert(
+        title = 'Invalid Linguistic Variable Name', 'A linguistic variable with that name has already been added',
+        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
       )
+      
     }else if(grepl('^\\s*$', linguistic_variable_name)){
-      showModal(
-        modalDialog(
-          title = 'Invalid Linguistic Variable Name',
-          p('Cannot enter a linguistic variable name with just whitespace')
-        )
+      shinyalert(
+        'Invalid Linguistic Variable Name', 'Can\'t use a linguistic variable name with just whitespace',
+        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
       )
     }else{
       main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]] <- linguistic_variable(

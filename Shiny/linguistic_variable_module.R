@@ -11,14 +11,14 @@ linguistic_variable_ui <- function(ui_name, main, linguistic_variable_name){
       title = linguistic_variable_name,
       box(
         width = 12,
-        column(4, p(paste0('Min: ', lv$xlim[1], '\t Max: ', lv$xlim[2]))),
-        column(6, actionButton(ns('delete_btn'), 'Delete'), br())
+        column(4, p(paste0('Min: ', lv$xlim[1], '\t Max: ', lv$xlim[2])))
+        
       ),
       tags$div(
         id = ns('add_fuzzy_set_div'),
         box(
           width = 12, title = 'Add Fuzzy Set', collapsible = TRUE,
-          status = 'primary', solidHeader = TRUE,
+          solidHeader = FALSE, background = 'light-blue',
           fluidRow(
             div(
               class = 'col-sm-12 col-md-12 col-lg-6',
@@ -48,7 +48,8 @@ linguistic_variable_ui <- function(ui_name, main, linguistic_variable_name){
       box(
         title = 'Fuzzy Sets', width = 12, background = 'light-blue',
         tags$div(id = ns('fuzzy_set_ui_div'))
-      )
+      ),
+      column(6, actionButton(ns('delete_btn'), 'Delete'), br())
     )
   )
   
@@ -105,23 +106,21 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
   })
   
   
-  o <- observeEvent(input$add_fuzzy_set_btn, ignoreInit = TRUE, {
+  add_fuzzy_set_observer <- observeEvent(input$add_fuzzy_set_btn, ignoreInit = TRUE, {
     fuzzy_set_name <- input$fuzzy_set_name_text
     
     if(fuzzy_set_name %in% names(main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list)){
-      showModal(
-        modalDialog(
-          title = 'Invalid Fuzzy Set Name',
-          p(paste0('A fuzzy set with the name "', fuzzy_set_name, '" has already been added to ', linguistic_variable_name))
-        )
+      shinyalert(
+        'Invalid Fuzzy Set Name',
+        paste0('A fuzzy set with the name "', fuzzy_set_name, '" has already been added to ', linguistic_variable_name),
+        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
       )
       return(NULL)
     }else if(grepl('^\\s*$', fuzzy_set_name)){
-      showModal(
-        modalDialog(
-          title = 'Invalid Fuzzy Set Name',
-          p('Cannot enter a fuzzy set name with just whitespace')
-        )
+      shinyalert(
+        'Invalid Fuzzy Set Name',
+        'Can\'t enter a fuzzy set name with just whitespace',
+        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
       )
       return(NULL)
     }
@@ -167,7 +166,6 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
       
       if(length(lv$fuzzy_set_list) > 1){
         lapply(2:length(lv$fuzzy_set_list), function(i){
-        # for(i in 2:length(lv$fuzzy_set_list)){
           lines(x_values, lv$fuzzy_set_list[[i]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]))
         })
       }
@@ -175,8 +173,15 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
   })
   
   observeEvent(input$delete_btn, ignoreInit = TRUE, {
-    o$destroy()
-    
+    add_fuzzy_set_observer$destroy()
+    # shinyalert(
+    #   title = 'Warning', 'Are you sure you want to delete that?',
+    #   showCancelButton = TRUE, showConfirmButton = TRUE, type = 'warning',
+    #   callbackR = function(){
+    #     print('delete!!!!')
+    #     print(input$output_hot %>% hot_to_r)
+    #   }
+    # )
     removeUI(
       selector = paste0('#', session$ns('fuzzy_set_ui_div'))
     )
@@ -191,3 +196,4 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
   })
 
 }
+

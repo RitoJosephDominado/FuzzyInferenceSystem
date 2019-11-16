@@ -5,7 +5,8 @@ library(R6)
 library(listviewer)
 library(rhandsontable)
 library(jsonlite)
-library(reactlog)
+library(readr)
+library(shinyalert)
 
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
@@ -30,8 +31,6 @@ source('Main/fuzzy_proposition_environments.R')
 source('Main/translate_fuzzy_proposition.R')
 source('Main/json_conversion.R')
 
-options(shiny.reactlog = TRUE)
-
 ui <- dashboardPage(
   dashboardHeader(),
   dashboardSidebar(
@@ -45,6 +44,7 @@ ui <- dashboardPage(
     )
   ),
   dashboardBody(
+    useShinyalert(),
     tabItems(
       tabItem(tabName = 'upload_tab', upload_ui('upload')),
       tabItem(tabName = 'add_linguistic_variable_tab', add_linguistic_variable_ui('add_linguistic_variable')),

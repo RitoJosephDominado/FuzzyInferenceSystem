@@ -6,11 +6,12 @@ fuzzy_set_ui <- function(ui_name, linguistic_variable_name, fuzzy_set_name){
     box(
       width = 6, title = paste(linguistic_variable_name, ':', fuzzy_set_name),
       collapsible = TRUE, collapsed = TRUE,
+      
+      br(),
+      reactjsonOutput(ns('model_reactjson')),
       fluidRow(column(
         12, actionButton(ns('delete_btn'), 'Delete')
-      )),
-      br(),
-      reactjsonOutput(ns('model_reactjson'))
+      ))
     )
   )
 }

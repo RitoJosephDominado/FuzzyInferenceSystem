@@ -26,7 +26,12 @@ save_server <- function(input, output, session, main, triggers){
   output$linguistic_variable_list_reactjson <- renderReactjson({
     triggers$update_fuzzy_inference_system$depend()
     lv_list <- main$fuzzy_inference_system$linguistic_variable_list
-    lv_list <- lv_list %>% map(~.x$fuzzy_set_list %>% map(~.x[which(names(.x) != 'membership_function')]))
+    
+    lv_list <- lv_list %>% map(~ list(
+      name = .x$name,
+      xlim = .x$xlim,
+      fuzzy_set_list = .x$fuzzy_set_list %>% map(~.x[which(names(.x) != 'membership_function')])
+    ))
     
     lv_list %>% reactjson
   })
@@ -50,3 +55,6 @@ save_server <- function(input, output, session, main, triggers){
     showNotification('Saved json')
   })
 }
+
+
+
