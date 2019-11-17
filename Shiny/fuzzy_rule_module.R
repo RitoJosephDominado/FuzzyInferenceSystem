@@ -5,7 +5,7 @@ fuzzy_rule_ui <- function(ui_name, main, index){
   name <- main$consequent_vec[index]
   title <- substr(index, start = 5, stop = nchar(main$consequent_vec[index]))
   box(
-    width = 12, title= paste('Fuzzy rule', title), #background = 'red',
+    width = 12, title= paste('Fuzzy rule', title), status = 'primary', solidHeader = TRUE,
     fluidRow(
       div(
         class = 'col-sm-12 col-md-12 col-lg-7',

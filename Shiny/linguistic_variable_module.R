@@ -7,23 +7,23 @@ linguistic_variable_ui <- function(ui_name, main, linguistic_variable_name){
   div(
     id = ns('linguistic_variable_div'),
     box(
-      width = 12, 
+      width = 12, status = 'primary', #solidHeader = TRUE,
       title = linguistic_variable_name,
-      box(
-        width = 12,
-        column(4, p(paste0('Min: ', lv$xlim[1], '\t Max: ', lv$xlim[2])))
-        
-      ),
+      
       tags$div(
         id = ns('add_fuzzy_set_div'),
         box(
-          width = 12, title = 'Add Fuzzy Set', collapsible = TRUE,
-          solidHeader = FALSE, background = 'light-blue',
+          width = 12, title = 'Details', collapsible = TRUE, 
+          status = 'primary', solidHeader = TRUE,
           fluidRow(
             div(
               class = 'col-sm-12 col-md-12 col-lg-6',
               box(
-                width = 12, title = 'Parameters', status = 'success', solidHeader = TRUE,
+                width = 12, title = 'Range', status = 'success', solidHeader = TRUE,
+                HTML(paste0(h4('Min: ', lv$xlim[1], HTML('&emsp;'), 'Max: ', lv$xlim[2], style = 'font-color:black',)))
+              ),
+              box(
+                width = 12, title = 'Add Fuzzy Set', status = 'success', solidHeader = TRUE,
                 column(4, textInput(ns('fuzzy_set_name_text'), 'Name')),
                 column(6, selectInput(ns('fuzzy_set_type_select'), 'Type', choices = c(
                   'Z-shaped' = 'z',

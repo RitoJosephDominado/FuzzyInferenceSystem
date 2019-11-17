@@ -1,26 +1,43 @@
 add_fuzzy_rule_ui <- function(name){
   ns <- NS(name)
   tagList(
-    # width = 12, title = 'Add fuzzy rules',
     box(
-      width = 12,
-      verticalLayout(
-        selectInput(
-          ns('fuzzy_proposition_type_select'), 'Type', 
-          choices = c(
-            'Simple' = 'simple_fuzzy_proposition', 
-            'Union' = 'union_fuzzy_proposition', 
-            'Intersection' = 'intersection_fuzzy_proposition'
-          ),width = '200px'
+      width = 12, title = 'Add Fuzzy Rule', #background = 'red',
+      # fluidRow(
+      #   column(
+      #     2, 
+      #     selectInput(
+      #       ns('fuzzy_proposition_type_select'), 'Type', 
+      #       choices = c(
+      #         'Simple' = 'simple_fuzzy_proposition', 
+      #         'Union' = 'union_fuzzy_proposition', 
+      #         'Intersection' = 'intersection_fuzzy_proposition'
+      #       ),width = '200px'
+      #     )
+      #   ),
+      #   column(10, br(), actionButton(ns('add_fuzzy_rule_btn'), 'Add'))
+      # )
+      
+      fluidRow(
+        div(
+          class = 'col-sm-7 col-md-4 col-lg-2',
+          selectInput(
+            ns('fuzzy_proposition_type_select'), 'Type', 
+            choices = c(
+              'Simple' = 'simple_fuzzy_proposition', 
+              'Union' = 'union_fuzzy_proposition', 
+              'Intersection' = 'intersection_fuzzy_proposition'
+            ),width = '200px'
+          )
         ),
-        actionButton(ns('add_fuzzy_rule_btn'), 'Add')
+        div(class = 'col-sm-5 col-md-4 col-lg-2', br(), actionButton(ns('add_fuzzy_rule_btn'), 'Add'))
       )
     ),
     tags$div(id = ns('fuzzy_rule_ui_div')),
     p('-')
   )
 }
-
+# 'col-sm-12 col-md-12 col-lg-6',
 add_fuzzy_rule_server <- function(input, output, session, main, triggers){
   
   observeEvent(input$add_fuzzy_rule_btn, {

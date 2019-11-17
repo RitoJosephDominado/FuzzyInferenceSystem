@@ -1,16 +1,21 @@
 
 add_linguistic_variable_ui <- function(name){
   ns <- NS(name)
-  box(
-    width = 12, title = 'Add linguistic variable',
-    fluidRow(
-      column(2, textInput(ns('linguistic_variable_name_text'), label = 'Name')),
-      column(3, numericInput(ns('range_min_numeric'), 'Min', 0, -10000, 10000, 0.1)),
-      column(3, numericInput(ns('range_max_numeric'), 'Max', 100, -10000, 10000, 0.1)),
-      column(2, br(), actionButton(ns('add_linguistic_variable_btn'), 'Add'))
+  div(
+    box(
+      width = 12, title = 'Add Linguistic Variable',
+      fluidRow(
+        column(2, textInput(ns('linguistic_variable_name_text'), label = 'Name')),
+        column(3, numericInput(ns('range_min_numeric'), 'Min', 0, -10000, 10000, 0.1)),
+        column(3, numericInput(ns('range_max_numeric'), 'Max', 100, -10000, 10000, 0.1)),
+        column(2, br(), actionButton(ns('add_linguistic_variable_btn'), 'Add'))
+      ),
+      
     ),
     tags$div(id = ns('linguistic_variable_ui_div')),
-  ) %>% div(p('-'))
+    p('-')
+  )
+  
 }
 
 add_linguistic_variable_server <- function(input, output, session, main, triggers){
