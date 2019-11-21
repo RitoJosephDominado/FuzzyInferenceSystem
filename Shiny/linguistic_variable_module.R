@@ -57,6 +57,12 @@ linguistic_variable_ui <- function(ui_name, main, linguistic_variable_name){
 
 
 linguistic_variable_server <- function(input, output, session, main, triggers, linguistic_variable_name, rng){
+  
+  local_triggers <- reactiveValues(
+    added_fuzzy_set = make_reactive_trigger(),
+    deleted_fuzzy_set = make_reactive_trigger()
+  )
+  
   fuzzy_set_list <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list
   if(length(fuzzy_set_list) > 0){
     lapply(seq_along(fuzzy_set_list), function(i){
@@ -74,13 +80,9 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
         fuzzy_set_name = fuzzy_set_name
       )
     })
+    
+    local_triggers$added_fuzzy_set$trigger()
   }
-  
-  
-  local_triggers <- reactiveValues(
-    added_fuzzy_set = make_reactive_trigger(),
-    deleted_fuzzy_set = make_reactive_trigger()
-  )
   
   output$parameters_ui <- renderUI({
     parameter_inputs <- if(input$fuzzy_set_type_select %in% c('z', 's')){
@@ -153,13 +155,13 @@ linguistic_variable_server <- function(input, output, session, main, triggers, l
     
     local_triggers$added_fuzzy_set$trigger()
   })
-  
 
   output$main_plot <- renderPlot({
     local_triggers$added_fuzzy_set$depend()
     local_triggers$deleted_fuzzy_set$depend()
+    
     lv <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]]
-
+   
     if(length(lv$fuzzy_set_list) > 0){
       x_values <- seq(rng[1], rng[2], length.out = 100)
       plot(x_values, lv$fuzzy_set_list[[1]]$membership_function(x_values), type = 'o', xlim = c(rng[1], rng[2]), ylim = c(0, 1))

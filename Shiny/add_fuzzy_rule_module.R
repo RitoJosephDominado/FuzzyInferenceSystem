@@ -37,7 +37,7 @@ add_fuzzy_rule_ui <- function(name){
     p('-')
   )
 }
-# 'col-sm-12 col-md-12 col-lg-6',
+
 add_fuzzy_rule_server <- function(input, output, session, main, triggers){
   
   observeEvent(input$add_fuzzy_rule_btn, {
@@ -80,6 +80,8 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
   observe({
     triggers$uploaded_json$depend()
     isolate({
+      runjs('document.getElementById("add_fuzzy_rule-fuzzy_rule_ui_div").innerHTML = "";')
+      
       lapply(seq_along(main$fuzzy_inference_system$fuzzy_proposition_list), function(i){
         insertUI(
           selector = paste0('#', session$ns('fuzzy_rule_ui_div')),

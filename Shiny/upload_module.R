@@ -38,6 +38,10 @@ upload_server <- function(input, output, session, main, triggers, uploaded){
     # if(substr(nchar))
     json <- read_json(path)
     fis <- json[[1]] %>% fromJSON(simplifyDataFrame = FALSE) %>% convert_list_to_FuzzyInferenceSystem
+    
+    main$old_linguistic_variable_name_vec <- names(main$fuzzy_inference_system$linguistic_variable_list)
+    main$old_fuzzy_rule_name_vec <- names(main$fuzzy_proposition_environment_list) #%>% map(substr(index, start = 5, stop = nchar(main$consequent_vec[index]))) %>% unlist
+    
     main$fuzzy_inference_system <- fis
     uploaded$fuzzy_inference_system <- fis
     
@@ -47,8 +51,13 @@ upload_server <- function(input, output, session, main, triggers, uploaded){
     names(main$fuzzy_proposition_environment_list) <- paste0('rule', seq(1, length(main$consequent_vec)))
     main$fuzzy_proposition_counter <- length(main$consequent_vec)
     
-    showNotification('Uploaded json')
+    
     triggers$uploaded_json$trigger()
+    
+    callModule(
+      add_linguistic_variable_server, 'add_linguistic_variable',
+      main = main, triggers = triggers
+    )
     
     shinyalert('Success', 'Uploaded json', type = 'success')
   })

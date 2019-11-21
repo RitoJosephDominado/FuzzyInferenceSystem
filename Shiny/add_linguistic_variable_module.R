@@ -59,25 +59,53 @@ add_linguistic_variable_server <- function(input, output, session, main, trigger
     }
   })
   
+  observe(priority = 5, {
+    triggers$uploaded_json$depend()
+    shinyjs::runjs('document.getElementById("add_linguistic_variable-linguistic_variable_ui_div").innerHTML = "";')
+
+  })
   
   # Rerendering ui when json is uploaded
-  observe({
+  observe(priority = 3, {
     triggers$uploaded_json$depend()
-    lapply(main$fuzzy_inference_system$linguistic_variable_list, function(x_linguistic_variable){
-      insertUI(
-        selector = paste0('#', session$ns('linguistic_variable_ui_div')),
-        ui = linguistic_variable_ui(
-          ui_name = session$ns(x_linguistic_variable$name),
-          main = main,
-          linguistic_variable_name = x_linguistic_variable$name
-        )
-      )
+    isolate({
+      # shinyjs::runjs('document.getElementById("add_linguistic_variable-linguistic_variable_ui_div").innerHTML = "";')
       
-      callModule(
-        linguistic_variable_server, id = x_linguistic_variable$name,
-        main = main, triggers = triggers,
-        linguistic_variable_name = x_linguistic_variable$name, rng = x_linguistic_variable$xlim
-      )
+      lapply(main$fuzzy_inference_system$linguistic_variable_list, function(x_linguistic_variable){
+        insertUI(
+          selector = paste0('#', session$ns('linguistic_variable_ui_div')),
+          ui = linguistic_variable_ui(
+            ui_name = session$ns(x_linguistic_variable$name),
+            main = main,
+            linguistic_variable_name = x_linguistic_variable$name
+          )
+        )
+
+        callModule(
+          session = session,
+          linguistic_variable_server, id = x_linguistic_variable$name,
+          main = main, triggers = triggers,
+          linguistic_variable_name = x_linguistic_variable$name, rng = x_linguistic_variable$xlim
+        )
+      })
+      # lapply(seq_along(main$fuzzy_inference_system$linguistic_variable_list), function(i){
+      #   insertUI(
+      #     selector = paste0('#', session$ns('linguistic_variable_ui_div')),
+      #     ui = linguistic_variable_ui(
+      #       ui_name = session$ns(i),
+      #       main = main,
+      #       linguistic_variable_name = main$fuzzy_inference_system$linguistic_variable_list[[i]]$name
+      #     )
+      #   )
+      #   
+      #   callModule(
+      #     session = session,
+      #     linguistic_variable_server, id = i,
+      #     main = main, triggers = triggers,
+      #     linguistic_variable_name = main$fuzzy_inference_system$linguistic_variable_list[[i]]$name, 
+      #     rng = main$fuzzy_inference_system$linguistic_variable_list[[i]]$xlim
+      #   )
+      # })
     })
   })
 }

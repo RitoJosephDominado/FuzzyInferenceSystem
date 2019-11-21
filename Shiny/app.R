@@ -7,6 +7,7 @@ library(rhandsontable)
 library(jsonlite)
 library(readr)
 library(shinyalert)
+library(shinyjs)
 
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
@@ -44,6 +45,7 @@ ui <- dashboardPage(
     )
   ),
   dashboardBody(
+    useShinyjs(),
     useShinyalert(),
     tabItems(
       tabItem(tabName = 'upload_tab', upload_ui('upload')),
@@ -60,7 +62,10 @@ server <- function(input, output, session) {
     fuzzy_inference_system = FuzzyInferenceSystem$new(),
     fuzzy_proposition_environment_list = list(),
     fuzzy_proposition_counter = 0,
-    consequent_vec = NULL
+    consequent_vec = NULL,
+    old_linguistic_variable_name_vec = NULL,
+    old_fuzzy_rule_name_vec = NULL,
+    linguistic_variable_counter = 0
   )
   
   triggers <- reactiveValues(
