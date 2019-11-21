@@ -21,6 +21,14 @@ Intersections and unions can be composed of other fuzzy propositions. Intersecti
 
 The three can all be negated with the “Negated” switch. This will result in their outputs being one minus the supposed membership.
 
+
+### Using a saved fuzzy inference system
+Go to the Upload tab and click "Browse"
+Select the JSON file in the "json" folder named "Fuzzy inference system for health.json"
+Click "Upload"
+
+
+
 ### Warning
 Uploading a second json file in the Upload module may cause errors to occur.
 
