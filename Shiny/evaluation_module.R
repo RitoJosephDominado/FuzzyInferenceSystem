@@ -23,22 +23,28 @@ evaluation_ui <- function(name){
           column(6, textInput(ns('output_df_filename_text'), 'Filename')),
           column(6, br(), actionButton(ns('save_output_df_btn'), 'Save'))
         )
-      )
+      ),
+      p('-')
     ),
     tabPanel(
       title = 'Upload',
-      column(6, fileInput(ns('features_file'), 'Upload (.csv)', width = '100%')),
-      column(3, br(), actionButton(ns('upload_features_btn'), 'Upload')),
-      column(
-        width = 6,
-        rHandsontableOutput(ns('uploaded_input_hot'))
+      fluidRow(
+        column(6, fileInput(ns('features_file'), 'Upload (.csv)', width = '100%')),
+        column(6, br(), actionButton(ns('upload_features_btn'), 'Upload')),
       ),
-      column(
-        width = 6,
-        rHandsontableOutput(ns('uploaded_output_hot'))
+      
+      fluidRow(
+        box(
+          width = 6, title = 'Inputs',status = 'primary', solidHeader = TRUE,
+          rHandsontableOutput(ns('uploaded_input_hot'))
+        ),
+        box(
+          width = 6, title = 'Outputs', status = 'primary', solidHeader = TRUE,
+          rHandsontableOutput(ns('uploaded_output_hot'))
+        )
       )
     ),
-    fluidRow(p(''))
+    p('')
   )
 }
 
@@ -132,12 +138,34 @@ evaluation_server <- function(input, output, session, main, triggers){
       )
       return(NULL)
     }else{
-      input_df <- input$input_hot %>% hot_to_r
-      write_csv(input_df, path = paste0('Outputs/', filename, '.csv'))
+      output_df <- input$output_hot %>% hot_to_r
+      write_csv(output_df, path = paste0('Outputs/', filename, '.csv'))
       shinyalert(
         'Saved', paste0('Successfully saved ', filename, '.csv'),
         type = 'success'
       )
     }
+  })
+  
+  observeEvent(input$upload_features_btn, {
+    tables$uploaded_input_df <- read_csv(input$features_file$datapath)
+    
+  })
+  
+  output$uploaded_input_hot <- renderRHandsontable({
+    if(is.null(tables$uploaded_input_df)) return(NULL)
+    # req()
+    rhandsontable(tables$uploaded_input_df)
+  })
+  
+  output$uploaded_output_hot <- renderRHandsontable({
+    if(length(main$fuzzy_inference_system$fuzzy_proposition_list) == 0) return(NULL)
+    req(input$uploaded_input_hot)
+    input_df <- hot_to_r(input$uploaded_input_hot)
+    output_df <- main$fuzzy_inference_system$evaluate_fuzzy_proposition_list(input_df)
+    colnames(output_df) <- unname(main$consequent_vec)
+    rhandsontable(output_df, readOnly = TRUE)
+    
+    rhandsontable(output_df)
   })
 }
