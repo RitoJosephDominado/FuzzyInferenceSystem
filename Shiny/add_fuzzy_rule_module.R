@@ -1,22 +1,12 @@
+# Module for adding fuzzy rules. This is the second step, right after setting up your linguistic variables and their fuzzy sets
+# Here you use the linguistic variables and fuzzy sets created in the previous tab to configure the logic you want in your inference system
+
 add_fuzzy_rule_ui <- function(name){
   ns <- NS(name)
   tagList(
+    # ** Box for adding fuzzy rules ----
     box(
-      width = 12, title = 'Add Fuzzy Rule', #background = 'red',
-      # fluidRow(
-      #   column(
-      #     2, 
-      #     selectInput(
-      #       ns('fuzzy_proposition_type_select'), 'Type', 
-      #       choices = c(
-      #         'Simple' = 'simple_fuzzy_proposition', 
-      #         'Union' = 'union_fuzzy_proposition', 
-      #         'Intersection' = 'intersection_fuzzy_proposition'
-      #       ),width = '200px'
-      #     )
-      #   ),
-      #   column(10, br(), actionButton(ns('add_fuzzy_rule_btn'), 'Add'))
-      # )
+      width = 12, title = 'Add Fuzzy Rule',
       
       fluidRow(
         div(
@@ -33,17 +23,18 @@ add_fuzzy_rule_ui <- function(name){
         div(class = 'col-sm-5 col-md-4 col-lg-2', br(), actionButton(ns('add_fuzzy_rule_btn'), 'Add'))
       )
     ),
+    
+    # ** div where fuzzy rule ui's will be put into ----
     tags$div(id = ns('fuzzy_rule_ui_div')),
     p('-')
   )
 }
 
 add_fuzzy_rule_server <- function(input, output, session, main, triggers){
-  
+  # ** Observer for adding fuzzy rules ----
   observeEvent(input$add_fuzzy_rule_btn, {
-    selected_type <- input$fuzzy_proposition_type_select
     
-    
+    # ** ** Creating a fuzzy proposition based on the value in the dropdown with default parameters ----
     if(input$fuzzy_proposition_type_select == 'simple_fuzzy_proposition'){
       fuzzy_proposition <- simple_fuzzy_proposition(NULL, NULL)
     }else if(input$fuzzy_proposition_type_select == 'union_fuzzy_proposition'){
@@ -74,9 +65,9 @@ add_fuzzy_rule_server <- function(input, output, session, main, triggers){
       parent = main$fuzzy_proposition_environment_list,
       index = paste0('rule', index)
     )
-    
   })
   
+  # ** Observer for uploading json files ----
   observe({
     triggers$uploaded_json$depend()
     isolate({

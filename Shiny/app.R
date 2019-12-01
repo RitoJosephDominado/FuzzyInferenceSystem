@@ -1,3 +1,6 @@
+# author: Rito Joseph Dominado
+
+# Loading packages ----
 library(shiny)
 library(shinydashboard)
 library(rlang)
@@ -9,6 +12,7 @@ library(readr)
 library(shinyalert)
 library(shinyjs)
 
+# Loading files ----
 source('upload_module.R')
 source('add_linguistic_variable_module.R')
 source('add_fuzzy_rule_module.R')
@@ -32,6 +36,7 @@ source('Main/fuzzy_proposition_environments.R')
 source('Main/translate_fuzzy_proposition.R')
 source('Main/json_conversion.R')
 
+# Root ui ----
 ui <- dashboardPage(
   dashboardHeader(),
   dashboardSidebar(
@@ -56,53 +61,60 @@ ui <- dashboardPage(
     )
   )
 )
-
+# Root server function ----
 server <- function(input, output, session) {
+  
+  # ** reactiveValues manipulated throughout ----
   main <- reactiveValues(
     fuzzy_inference_system = FuzzyInferenceSystem$new(),
     fuzzy_proposition_environment_list = list(),
     fuzzy_proposition_counter = 0,
     consequent_vec = NULL,
-    old_linguistic_variable_name_vec = NULL,
-    old_fuzzy_rule_name_vec = NULL,
     linguistic_variable_counter = 0
-  )
-  
-  triggers <- reactiveValues(
-    uploaded_json = make_reactive_trigger(),
-    update_fuzzy_inference_system = make_reactive_trigger(),
-    added_linguistic_variable = make_reactive_trigger()
   )
   
   uploaded <- reactiveValues(
     fuzzy_inference_system = NULL
   )
   
+  # ** reactiveValues for reactive triggers ----
+  triggers <- reactiveValues(
+    uploaded_json = make_reactive_trigger(),
+    update_fuzzy_inference_system = make_reactive_trigger(),
+    added_linguistic_variable = make_reactive_trigger()
+  )
+  
+  # ** calling server function for upload module ----
   callModule(
     upload_server, 'upload',
     main = main, triggers = triggers, uploaded = uploaded
   )
   
+  # ** calling server function for add linguistic variable module ----
   callModule(
     add_linguistic_variable_server, 'add_linguistic_variable',
     main = main, triggers = triggers
   )
   
+  # ** calling server function for add fuzzy rule module ----
   callModule(
     add_fuzzy_rule_server, 'add_fuzzy_rule',
     main = main, triggers = triggers
   )
   
+  # ** calling server function for save module ----
   callModule(
     save_server, 'save',
     main = main, triggers = triggers
   )
   
+  # ** calling server function for evaluation module ----
   callModule(
     evaluation_server, 'evaluation',
     main = main, triggers = triggers
   )
   
+  # ** observer for clicking on sidebar ----
   observeEvent(input$main_sidebar, {
     triggers$update_fuzzy_inference_system$trigger()
     main$fuzzy_inference_system$fuzzy_proposition_list <- map(main$fuzzy_proposition_environment_list, convert_environment_to_fuzzy_proposition)

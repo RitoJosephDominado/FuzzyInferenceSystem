@@ -72,10 +72,14 @@ fis_from_list$linguistic_variable_list %>% str
 fis_list$linguistic_variable_list
 reactjson(fis_list$linguistic_variable_list)
 
-fis_list %>% toJSON() %>% write_json('Data/demo1.json')
+fis_list %>% toJSON(pretty = TRUE) %>% write_json('Demos/demo2.json')
+?write_json
+
+fis_list %>% toJSON(pretty = TRUE) %>% write('Demos/ok.json')
 
 demo1_path <- 'Data/demo1.json'
 json <- read_json('Data/demo1.json', simplifyVector = FALSE)
+
 json[[1]]
 fis_list_from_json <- jsonlite::fromJSON(txt = json[[1]])
 json
@@ -114,3 +118,12 @@ fis_from_json <- convert_list_to_FuzzyInferenceSystem(fis_list_from_json)
 fis_from_json$fuzzy_proposition_list
 fis_from_json$evaluate_fuzzy_proposition_list(feature_df)
 fis_from_json$fuzzy_proposition_list
+
+
+
+a <- read_file('Demos/ok.json') %>% fromJSON(simplifyDataFrame = FALSE)
+a
+b <- a %>% convert_list_to_FuzzyInferenceSystem()
+b$evaluate_fuzzy_proposition_list(feature_df)
+reactjson(b$linguistic_variable_list$height$fuzzy_set_list$short$p1)
+b$fuzzy_proposition_list$is_short_light$argument_list

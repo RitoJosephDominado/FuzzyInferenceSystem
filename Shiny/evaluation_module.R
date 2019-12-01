@@ -1,31 +1,38 @@
+# Page for evaluating the fuzzy inference system
+
 evaluation_ui <- function(name){
   ns <- NS(name)
   tabBox(
     width = 12,
+    
+    # ** Panel for evaluating manually typed inputs for the fuzzy inference system ----
     tabPanel(
       title = 'Manual',
-      numericInput(ns('num_rows_numeric'), 'Number of rows', 1, 0, 1000, 1),
-      
-      box(
-        width = 6, title = 'Inputs', status = 'primary', solidHeader = TRUE,
-        rHandsontableOutput(ns('input_hot')),
-        br(),
-        fluidRow(
-          column(6, textInput(ns('input_df_filename_text'), 'Filename')),
-          column(6, br(), actionButton(ns('save_input_df_btn'), 'Save'))
+      numericInput(ns('num_rows_numeric'), 'Number of rows', 1, 0, 1000, 1, width = '200px'),
+      fluidRow(
+        box(
+          width = 6, title = 'Inputs', status = 'primary', solidHeader = TRUE,
+          rHandsontableOutput(ns('input_hot')),
+          br(),
+          fluidRow(
+            column(6, textInput(ns('input_df_filename_text'), 'Filename')),
+            column(6, br(), actionButton(ns('save_input_df_btn'), 'Save'))
+          )
+        ),
+        box(
+          width = 6, title = 'Ouputs', status = 'primary', solidHeader = TRUE,
+          rHandsontableOutput(ns('output_hot')),
+          br(),
+          fluidRow(
+            column(6, textInput(ns('output_df_filename_text'), 'Filename')),
+            column(6, br(), actionButton(ns('save_output_df_btn'), 'Save'))
+          )
         )
       ),
-      box(
-        width = 6, title = 'Ouputs', status = 'primary', solidHeader = TRUE,
-        rHandsontableOutput(ns('output_hot')),
-        br(),
-        fluidRow(
-          column(6, textInput(ns('output_df_filename_text'), 'Filename')),
-          column(6, br(), actionButton(ns('save_output_df_btn'), 'Save'))
-        )
-      ),
-      p('-')
+      p('')
     ),
+    
+    # ** Panel for evaluating csv files of inputs for the fuzzy inference system ----
     tabPanel(
       title = 'Upload',
       fluidRow(
@@ -49,6 +56,7 @@ evaluation_ui <- function(name){
 }
 
 evaluation_server <- function(input, output, session, main, triggers){
+  # ** Data frames for display ----
   tables <- reactiveValues(
     input_df = NULL,
     output_df = NULL,
@@ -65,8 +73,9 @@ evaluation_server <- function(input, output, session, main, triggers){
       )
     )
   })
-  isolate({colnames(tables$input_df) <- names(main$fuzzy_inference_system$linguistic_variable_list)})
-
+  isolate({colnames(tables$input_df) <- main$fuzzy_inference_system$linguistic_variable_list %>% map(~ .x$name) %>% unlist})
+  
+  # ** Observer that updates the input_df data frame ----
   observe({
     triggers$added_linguistic_variable$depend()
     triggers$update_fuzzy_inference_system$depend()
@@ -78,12 +87,12 @@ evaluation_server <- function(input, output, session, main, triggers){
         ncol = length(main$fuzzy_inference_system$linguistic_variable_list)
       )
     )
-    colnames(input_df) <- names(main$fuzzy_inference_system$linguistic_variable_list)
+    colnames(input_df) <- main$fuzzy_inference_system$linguistic_variable_list %>% map(~ .x$name) %>% unlist
 
     tables$input_df <- input_df
   })
   
-  
+  # ** Rendering hot for manual inputs ----
   output$input_hot <- renderRHandsontable({
     triggers$added_linguistic_variable$depend()
     
@@ -93,17 +102,20 @@ evaluation_server <- function(input, output, session, main, triggers){
     rhandsontable(default_df)
   })
   
-  
+  # ** Rendering hot for results of manual inputs ----
   output$output_hot <- renderRHandsontable({
     triggers$update_fuzzy_inference_system$depend()
     if(length(main$fuzzy_inference_system$fuzzy_proposition_list) == 0) return(NULL)
     req(input$input_hot)
     input_df <- hot_to_r(input$input_hot)
+    
+    if(all(colnames(input_df) != (main$fuzzy_inference_system$linguistic_variable_list %>% map(~.x$name) %>% unlist))){
+      return(NULL)
+    }
     output_df <- main$fuzzy_inference_system$evaluate_fuzzy_proposition_list(input_df)
     colnames(output_df) <- unname(main$consequent_vec)
     rhandsontable(output_df, readOnly = TRUE)
   })
-  
   
   observeEvent(input$save_input_df_btn, {
     filename <- input$input_df_filename_text
@@ -117,7 +129,7 @@ evaluation_server <- function(input, output, session, main, triggers){
       return(NULL)
     }else{
       input_df <- input$input_hot %>% hot_to_r
-      write_csv(input_df, path = paste0('Data/', filename, '.csv'))
+      write_csv(input_df, path = paste0('Inputs/', filename, '.csv'))
       shinyalert(
         'Saved', paste0('Successfully saved ', filename, '.csv'),
         type = 'success'
@@ -136,7 +148,8 @@ evaluation_server <- function(input, output, session, main, triggers){
       )
       return(NULL)
     }else{
-      output_df <- input$output_hot %>% hot_to_r
+      output_df <- input$output_hot %>% hot_to_r %>% as.data.frame
+
       write_csv(output_df, path = paste0('Outputs/', filename, '.csv'))
       shinyalert(
         'Saved', paste0('Successfully saved ', filename, '.csv'),
@@ -147,16 +160,15 @@ evaluation_server <- function(input, output, session, main, triggers){
   
   observeEvent(input$upload_features_btn, {
     tables$uploaded_input_df <- read_csv(input$features_file$datapath)
-    
   })
   
   output$uploaded_input_hot <- renderRHandsontable({
     if(is.null(tables$uploaded_input_df)) return(NULL)
-    # req()
     rhandsontable(tables$uploaded_input_df)
   })
   
   output$uploaded_output_hot <- renderRHandsontable({
+    triggers$update_fuzzy_inference_system$depend()
     if(length(main$fuzzy_inference_system$fuzzy_proposition_list) == 0) return(NULL)
     req(input$uploaded_input_hot)
     input_df <- hot_to_r(input$uploaded_input_hot)

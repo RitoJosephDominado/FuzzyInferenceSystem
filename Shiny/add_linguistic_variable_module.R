@@ -1,7 +1,11 @@
+# Module for adding linguistic variables. If you're making a FuzzyInferenceSystem from scratch, craeting linguistic variables is
+# the first step. 
+
 
 add_linguistic_variable_ui <- function(name){
   ns <- NS(name)
   div(
+    # ** Box for adding new linguistic variables ----
     box(
       width = 12, title = 'Add Linguistic Variable',
       fluidRow(
@@ -9,103 +13,88 @@ add_linguistic_variable_ui <- function(name){
         column(3, numericInput(ns('range_min_numeric'), 'Min', 0, -10000, 10000, 0.1)),
         column(3, numericInput(ns('range_max_numeric'), 'Max', 100, -10000, 10000, 0.1)),
         column(2, br(), actionButton(ns('add_linguistic_variable_btn'), 'Add'))
-      ),
-      
+      )
     ),
-    tags$div(id = ns('linguistic_variable_ui_div')),
+    # ** div where linguistic variable ui's get put in ----
+    div(id = ns('linguistic_variable_ui_div')),
+    
     p('-')
   )
-  
 }
 
 add_linguistic_variable_server <- function(input, output, session, main, triggers){
+  # ** Observer for adding linguistic variables ----
   observeEvent(input$add_linguistic_variable_btn, {
     linguistic_variable_name <- input$linguistic_variable_name_text
     
-    if(linguistic_variable_name %in% names(main$fuzzy_inference_system$linguistic_variable_list)){
-      shinyalert(
-        title = 'Invalid Linguistic Variable Name', 'A linguistic variable with that name has already been added',
-        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
+    # ** ** Creating the a ui name for the new linguistic variable ----
+    # The app uses temporary ui names instead of the actual names of the linguistic variables as names for the lists
+    # This is done so that the names will be unique identifiers, and no ui-to-server confusion occurs when files are uploaded
+    # with linguistic variables who use repeated names
+    main$linguistic_variable_counter <- main$linguistic_variable_counter + 1
+    linguistic_variable_ui_name <- paste0('linguistic_variable_', main$linguistic_variable_counter)
+    
+    # ** ** Adding the new linguistic variable into the main FIS model ----
+    main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_ui_name]] <- linguistic_variable(
+      name = linguistic_variable_name,
+      xlim = c(min = input$range_min_numeric, max = input$range_max_numeric)
+    )
+    
+    # ** ** Calling the linguistic variable ui and server functions ----
+    insertUI(
+      selector = paste0('#', session$ns('linguistic_variable_ui_div')),
+      ui = linguistic_variable_ui(
+        linguistic_variable_ui_name = session$ns(linguistic_variable_ui_name),
+        linguistic_variable_name = linguistic_variable_name,
+        linguistic_variable_index = main$linguistic_variable_counter,
+        main = main
       )
-      
-    }else if(grepl('^\\s*$', linguistic_variable_name)){
-      shinyalert(
-        'Invalid Linguistic Variable Name', 'Can\'t use a linguistic variable name with just whitespace',
-        type = 'error', showConfirmButton = TRUE, closeOnClickOutside = TRUE
-      )
-    }else{
-      main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_name]] <- linguistic_variable(
-        name = linguistic_variable_name,
-        xlim = c(min = input$range_min_numeric, max = input$range_max_numeric)
-      )
-      rng <- c(min = input$range_min_numeric, max = input$range_max_numeric)
-     
-      insertUI(
-        selector = paste0('#', session$ns('linguistic_variable_ui_div')),
-        ui = linguistic_variable_ui(
-          ui_name = session$ns(linguistic_variable_name), 
-          main = main,
-          linguistic_variable_name = linguistic_variable_name
-        )
-      )
-
-      callModule(
-        linguistic_variable_server, id = linguistic_variable_name,
-        main = main, triggers = triggers,
-        linguistic_variable_name = linguistic_variable_name, rng = rng
-      )
-      
-      triggers$added_linguistic_variable$trigger()
-    }
+    )
+    
+    callModule(
+      linguistic_variable_server, id = linguistic_variable_ui_name,
+      main = main, triggers = triggers,
+      linguistic_variable_ui_name = linguistic_variable_ui_name,
+      linguistic_variable_name = linguistic_variable_name,
+      linguistic_variable_index = main$linguistic_variable_counter
+    )
+    
+    triggers$added_linguistic_variable$trigger()
   })
   
-  observe(priority = 5, {
-    triggers$uploaded_json$depend()
-    shinyjs::runjs('document.getElementById("add_linguistic_variable-linguistic_variable_ui_div").innerHTML = "";')
-
-  })
-  
-  # Rerendering ui when json is uploaded
-  observe(priority = 3, {
+  # ** ** Observer for the uploaded json trigger ----
+  # This trigger is activated by the button in the upload module, which allows you to upload json files
+  observe({
     triggers$uploaded_json$depend()
     isolate({
-      # shinyjs::runjs('document.getElementById("add_linguistic_variable-linguistic_variable_ui_div").innerHTML = "";')
+      shinyjs::runjs('document.getElementById("add_linguistic_variable-linguistic_variable_ui_div").innerHTML = "";')
       
-      lapply(main$fuzzy_inference_system$linguistic_variable_list, function(x_linguistic_variable){
+      lapply(names(main$fuzzy_inference_system$linguistic_variable_list), function(linguistic_variable_ui_name){
+        # ** ** Creating the ui name for a linguistic variable ----
+        x_linguistic_variable <- main$fuzzy_inference_system$linguistic_variable_list[[linguistic_variable_ui_name]]
+        linguistic_variable_index <- substr(linguistic_variable_ui_name, 21, nchar(linguistic_variable_ui_name)) %>% as.integer()
+        linguistic_variable_ui_name <- paste0('linguistic_variable_', linguistic_variable_index)
+        
+        # ** ** Inserting new linguistic variable ui and calling its server function ----
         insertUI(
           selector = paste0('#', session$ns('linguistic_variable_ui_div')),
           ui = linguistic_variable_ui(
-            ui_name = session$ns(x_linguistic_variable$name),
             main = main,
-            linguistic_variable_name = x_linguistic_variable$name
+            linguistic_variable_ui_name = session$ns(linguistic_variable_ui_name),
+            linguistic_variable_name = x_linguistic_variable$name,
+            linguistic_variable_index = linguistic_variable_index
           )
         )
-
+        
         callModule(
-          session = session,
-          linguistic_variable_server, id = x_linguistic_variable$name,
+          module = linguistic_variable_server,
+          id = linguistic_variable_ui_name,
           main = main, triggers = triggers,
-          linguistic_variable_name = x_linguistic_variable$name, rng = x_linguistic_variable$xlim
+          linguistic_variable_ui_name = linguistic_variable_ui_name,
+          linguistic_variable_name = x_linguistic_variable$name,
+          linguistic_variable_index = linguistic_variable_index
         )
       })
-      # lapply(seq_along(main$fuzzy_inference_system$linguistic_variable_list), function(i){
-      #   insertUI(
-      #     selector = paste0('#', session$ns('linguistic_variable_ui_div')),
-      #     ui = linguistic_variable_ui(
-      #       ui_name = session$ns(i),
-      #       main = main,
-      #       linguistic_variable_name = main$fuzzy_inference_system$linguistic_variable_list[[i]]$name
-      #     )
-      #   )
-      #   
-      #   callModule(
-      #     session = session,
-      #     linguistic_variable_server, id = i,
-      #     main = main, triggers = triggers,
-      #     linguistic_variable_name = main$fuzzy_inference_system$linguistic_variable_list[[i]]$name, 
-      #     rng = main$fuzzy_inference_system$linguistic_variable_list[[i]]$xlim
-      #   )
-      # })
     })
   })
 }

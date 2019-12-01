@@ -21,7 +21,16 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_
   if(fuzzy_proposition$type == 'simple_fuzzy_proposition'){
     linguistic_variable_name <- fuzzy_proposition$linguistic_variable_name
     fuzzy_set_name <- fuzzy_proposition$fuzzy_set_name
-    membership_function <- self$linguistic_variable_list[[linguistic_variable_name]]$fuzzy_set_list[[fuzzy_set_name]]$membership_function
+    
+    
+    temp <- Filter(function(lv){
+      lv$name == linguistic_variable_name
+    }, self$linguistic_variable_list)
+    
+    if(length(temp) == 0) return(NA_real_)
+    x_linguistic_variable <- temp[[1]]
+    
+    membership_function <- x_linguistic_variable$fuzzy_set_list[[fuzzy_set_name]]$membership_function
     
     if(is.null(membership_function)){
       membership_df <- rep(NA_real_, nrow(feature_df))
@@ -43,7 +52,6 @@ FuzzyInferenceSystem$set('public', 'evaluate_fuzzy_proposition', function(fuzzy_
     }else{
       membership_df <- rep(NA_real_, nrow(feature_df))
     }
-    
   }else if(fuzzy_proposition$type == 'negation_fuzzy_proposition'){
     return(1 - self$evaluate_fuzzy_proposition(fuzzy_proposition$argument, feature_df))
   }else{

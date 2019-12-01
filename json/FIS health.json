@@ -1,0 +1,262 @@
+{
+  "linguistic_variable_list": {
+    "weight": {
+      "name": ["weight"],
+      "xlim": [0, 100],
+      "fuzzy_set_list": {
+        "light": {
+          "type": ["z_fuzzy_set"],
+          "p1": [0],
+          "p2": [40]
+        },
+        "medium": {
+          "type": ["trapezoidal_fuzzy_set"],
+          "p1": [20],
+          "p2": [45],
+          "p3": [65],
+          "p4": [85]
+        },
+        "heavy": {
+          "type": ["s_fuzzy_set"],
+          "p1": [55],
+          "p2": [90]
+        }
+      }
+    },
+    "height": {
+      "name": ["height"],
+      "xlim": [0, 300],
+      "fuzzy_set_list": {
+        "short": {
+          "type": ["z_fuzzy_set"],
+          "p1": [50],
+          "p2": [180]
+        },
+        "medium": {
+          "type": ["trapezoidal_fuzzy_set"],
+          "p1": [25],
+          "p2": [140],
+          "p3": [190],
+          "p4": [280]
+        },
+        "tall": {
+          "type": ["s_fuzzy_set"],
+          "p1": [150],
+          "p2": [250]
+        }
+      }
+    }
+  },
+  "fuzzy_proposition_list": {
+    "is light": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["weight"],
+      "fuzzy_set_name": ["light"]
+    },
+    "has medium weight": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["weight"],
+      "fuzzy_set_name": ["medium"]
+    },
+    "is heavy": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["weight"],
+      "fuzzy_set_name": ["heavy"]
+    },
+    "is short": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["height"],
+      "fuzzy_set_name": ["short"]
+    },
+    "has medium height": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["height"],
+      "fuzzy_set_name": ["medium"]
+    },
+    "is tall": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["height"],
+      "fuzzy_set_name": ["tall"]
+    },
+    "is light AND short": {
+      "type": ["intersection_fuzzy_proposition"],
+      "negated": [false],
+      "argument_list": [
+        {
+          "type": ["simple_fuzzy_proposition"],
+          "negated": [false],
+          "linguistic_variable_name": ["weight"],
+          "fuzzy_set_name": ["light"]
+        },
+        {
+          "type": ["simple_fuzzy_proposition"],
+          "negated": [false],
+          "linguistic_variable_name": ["height"],
+          "fuzzy_set_name": ["short"]
+        }
+      ]
+    },
+    "has medium weight AND height": {
+      "type": ["intersection_fuzzy_proposition"],
+      "negated": [false],
+      "argument_list": [
+        {
+          "type": ["simple_fuzzy_proposition"],
+          "negated": [false],
+          "linguistic_variable_name": ["weight"],
+          "fuzzy_set_name": ["medium"]
+        },
+        {
+          "type": ["simple_fuzzy_proposition"],
+          "negated": [false],
+          "linguistic_variable_name": ["height"],
+          "fuzzy_set_name": ["medium"]
+        }
+      ]
+    },
+    "is heavy AND tall": {
+      "type": ["intersection_fuzzy_proposition"],
+      "negated": [false],
+      "argument_list": [
+        {
+          "type": ["simple_fuzzy_proposition"],
+          "negated": [false],
+          "linguistic_variable_name": ["weight"],
+          "fuzzy_set_name": ["heavy"]
+        },
+        {
+          "type": ["simple_fuzzy_proposition"],
+          "negated": [false],
+          "linguistic_variable_name": ["height"],
+          "fuzzy_set_name": ["tall"]
+        }
+      ]
+    },
+    "is healthy": {
+      "type": ["union_fuzzy_proposition"],
+      "negated": [false],
+      "argument_list": [
+        {
+          "type": ["intersection_fuzzy_proposition"],
+          "negated": [false],
+          "argument_list": [
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["weight"],
+              "fuzzy_set_name": ["light"]
+            },
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["height"],
+              "fuzzy_set_name": ["short"]
+            }
+          ]
+        },
+        {
+          "type": ["intersection_fuzzy_proposition"],
+          "negated": [false],
+          "argument_list": [
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["weight"],
+              "fuzzy_set_name": ["medium"]
+            },
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["height"],
+              "fuzzy_set_name": ["medium"]
+            }
+          ]
+        },
+        {
+          "type": ["intersection_fuzzy_proposition"],
+          "negated": [false],
+          "argument_list": [
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["weight"],
+              "fuzzy_set_name": ["heavy"]
+            },
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["height"],
+              "fuzzy_set_name": ["tall"]
+            }
+          ]
+        }
+      ]
+    },
+    "is NOT healthy": {
+      "type": ["union_fuzzy_proposition"],
+      "negated": [true],
+      "argument_list": [
+        {
+          "type": ["intersection_fuzzy_proposition"],
+          "negated": [false],
+          "argument_list": [
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["weight"],
+              "fuzzy_set_name": ["light"]
+            },
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["height"],
+              "fuzzy_set_name": ["short"]
+            }
+          ]
+        },
+        {
+          "type": ["intersection_fuzzy_proposition"],
+          "negated": [false],
+          "argument_list": [
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["weight"],
+              "fuzzy_set_name": ["medium"]
+            },
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["height"],
+              "fuzzy_set_name": ["medium"]
+            }
+          ]
+        },
+        {
+          "type": ["intersection_fuzzy_proposition"],
+          "negated": [false],
+          "argument_list": [
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["weight"],
+              "fuzzy_set_name": ["heavy"]
+            },
+            {
+              "type": ["simple_fuzzy_proposition"],
+              "negated": [false],
+              "linguistic_variable_name": ["height"],
+              "fuzzy_set_name": ["tall"]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

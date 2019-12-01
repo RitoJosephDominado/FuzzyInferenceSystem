@@ -9,23 +9,21 @@ save_ui <- function(ui_name){
       width = 6, title = 'Fuzzy propositions',
       reactjsonOutput(ns('fuzzy_proposition_list_reactjson'))
     ),
-    # box(
-    #   width = 6, title = 'Fuzzy proposition environments',
-    #   reactjsonOutput(ns('fuzzy_proposition_environment_list_reactjson'))
-    # ),
+
     box(
       width = 6,
-      textInput(ns('file_name_text'), 'Filename', value = 'Fuzzy inference system'),
+      textInput(ns('file_name_text'), 'Filename', value = 'FIS'),
       actionButton(ns('save_fuzzy_inference_system_btn'), 'Save (.json)')
     )
   )
 }
 
 save_server <- function(input, output, session, main, triggers){
-  
   output$linguistic_variable_list_reactjson <- renderReactjson({
     triggers$update_fuzzy_inference_system$depend()
+
     lv_list <- main$fuzzy_inference_system$linguistic_variable_list
+    names(lv_list) <- main$fuzzy_inference_system$linguistic_variable_list %>% map(~ .x$name) %>% unlist
     
     lv_list <- lv_list %>% map(~ list(
       name = .x$name,
@@ -44,21 +42,16 @@ save_server <- function(input, output, session, main, triggers){
     main$fuzzy_inference_system$fuzzy_proposition_list %>% reactjson
   })
   
-  # output$fuzzy_proposition_environment_list_reactjson <- renderReactjson({
-  #   triggers$update_fuzzy_inference_system$depend()
-  #   main$fuzzy_proposition_environment_list %>% map(.f = convert_environment_to_fuzzy_proposition) %>% reactjson
-  # })
-  
   observeEvent(input$save_fuzzy_inference_system_btn, {
-    json <- main$fuzzy_inference_system %>% convert_FuzzyInferenceSystem_to_list %>% toJSON
-    filename <- paste0('json/', input$file_name_text, '.json')
-    write_json(json, filename)
+    temp_fis <- as.environment(as.list(main$fuzzy_inference_system, all.names = TRUE))
+    names(temp_fis$linguistic_variable_list) <- temp_fis$linguistic_variable_list %>% map(~ .x$name) %>% unlist
+    
+    json <- temp_fis %>% convert_FuzzyInferenceSystem_to_list %>% toJSON(pretty = TRUE)
+    filename <- paste0('JSON/', input$file_name_text, '.json')
+    write(json, filename)
     shinyalert(
       'Saved', paste0('Successfully saved ', filename, '.csv'),
       type = 'success'
     )
   })
 }
-
-
-

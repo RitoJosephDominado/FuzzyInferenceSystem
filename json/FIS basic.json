@@ -1,0 +1,29 @@
+{
+  "linguistic_variable_list": {
+    "a": {
+      "name": ["a"],
+      "xlim": [0, 100],
+      "fuzzy_set_list": {
+        "a1": {
+          "type": ["z_fuzzy_set"],
+          "p1": [0],
+          "p2": [46]
+        }
+      }
+    }
+  },
+  "fuzzy_proposition_list": {
+    "is a1": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [false],
+      "linguistic_variable_name": ["a"],
+      "fuzzy_set_name": ["a1"]
+    },
+    "is NOT a1": {
+      "type": ["simple_fuzzy_proposition"],
+      "negated": [true],
+      "linguistic_variable_name": ["a"],
+      "fuzzy_set_name": ["a1"]
+    }
+  }
+}
