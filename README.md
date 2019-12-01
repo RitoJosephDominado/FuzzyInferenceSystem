@@ -2,15 +2,24 @@
 A Shiny GUI for creating and using fuzzy inference systems
 
 
-### Creating linguistic variables
+### Quick demo using a saved fuzzy inference system
+On the "Upload" module, click "Browse"
+Select the JSON file in the "JSON" folder named "FIS health.json" then click "Upload"
+Click "Evaluation" on the sidebar, then click on the "Upload"
+Select the csv file in the "Inputs" folder named "FIS health - input.csv" then click "Upload"
 
+Clicking on "Linguistc variables" and "Fuzzy rules" on the sidebar shows you the parts of the uploaded model
+Clicking on "Save" on the sidebar shows you the JSON representation of the fuzzy inference system and allows you to save it
+
+
+
+### Creating linguistic variables
 Type the name of your linguistic variable, and the range of values for it, then click “Add”
 
 A new box will appear where you’ll see an interface for adding fuzzy sets. Put a name, select a type of fuzzy set and then enter the parameters for them.
 
 
 ### Creating fuzzy rules
-
 Select a type and then click “Add”.
 
 There are three types: simple, intersection and union.
@@ -22,15 +31,9 @@ Intersections and unions can be composed of other fuzzy propositions. Intersecti
 The three can all be negated with the “Negated” switch. This will result in their outputs being one minus the supposed membership.
 
 
-### Using a saved fuzzy inference system
-Go to the Upload tab and click "Browse"
-Select the JSON file in the "json" folder named "Fuzzy inference system for health.json"
-Click "Upload"
-
-
 
 ### Warning
-Uploading a second json file in the Upload module may cause errors to occur.
+Uploading a second json file in the Upload module will cause errors.
 
 
 ### For development
